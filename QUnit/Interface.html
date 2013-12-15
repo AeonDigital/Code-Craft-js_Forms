@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Testes para Interface</title>
+        <link rel="stylesheet" href="resources/qunit.css" />
+
+        <script src="resources/Get-min.js"></script>
+        <script src="resources/StringExtension-min.js"></script>
+        <script src="../Labels.js"></script>
+        <script src="../Forms.js"></script>
+
+        <style>
+            form fieldset {margin-bottom: 30px; position: relative;}
+            form fieldset label {float: left; width: 180px;}
+            form fieldset input { width: 300px; clear: both; margin-bottom: 6px; }
+            form fieldset textarea { width: 300px; height: 70px; clear: both; margin-bottom: 6px; }
+            *[data-tipfor] {display: none; position: absolute; top: 30px; left: 400px; 
+                            border: 1px solid #333; background-color:#808080; color: #fff;
+                            padding: 5px;}
+            form fieldset a {float: left;  width: 70px; padding: 10px; cursor: pointer;}
+            form fieldset select {float: left; width: 200px;}
+            
+            form fieldset input[data-valid="false"] {border: 2px solid #e71717; padding: -2px;}
+            form fieldset input[data-valid="true"] {border: 2px solid #1b8013; padding: -2px;}
+            form fieldset input[type="password"] {border: 1px solid #000;  padding: 2px;}
+            .jsp-inactive-or-null-password { background-color:#FFF;}
+            .jsp-invalid-password { background-color:#a22d99;}
+            .jsp-short-password { background-color:#c7c7c7;}
+            
+            .jsp-very-weak-password { background-color:#e1a841;}
+            .jsp-weak-password { background-color:#c1b423;}
+            .jsp-relevant-password { background-color:#438fe2;}
+            .jsp-strong-password { background-color:#75ea6c;}
+            .jsp-very-strong-password { background-color:#1b8013;}
+            
+            form select {float: left;}
+            form fieldset input[data-fastselect],
+            form fieldset input[list] {float: left; width: 200px; margin-left: 10px; clear: none;}
+            
+            form input[type="password"][data-valid="false"] {background-color:#a22d99;}
+            form input[type="password"][data-valid="true"] {background-color:#1b8013;}
+            
+        </style>
+    </head>
+    <body>
+        
+        <form method="post" action="">
+            <fieldset id="SetActionOnEnter">
+                <legend>SetActionOnEnter</legend>
+
+                <input type="datetime-local" id="iSetActionOnEnter_1" /><br />
+                <div data-tipfor="iSetActionOnEnter_1">Esta dica não deve aparecer para o teste atual.</div>
+                <input type="datetime" id="iSetActionOnEnter_2" /><br />
+                <input type="date" id="iSetActionOnEnter_3" /><br />
+                <input type="month" id="iSetActionOnEnter_4" /><br />
+                <input type="week" id="iSetActionOnEnter_5" /><br />
+                <input type="time" id="iSetActionOnEnter_6" /><br />
+                <input type="number" id="iSetActionOnEnter_7" /><br />
+                <input type="range" id="iSetActionOnEnter_8" /><br />
+                <input type="email" id="iSetActionOnEnter_9" /><br />
+                <input type="color" id="iSetActionOnEnter_10" /><br />
+                <input type="tel" id="iSetActionOnEnter_11" /><br />
+                <input type="text" id="iSetActionOnEnter_12" /><br />
+                <input type="url" id="iSetActionOnEnter_13" /><br />
+
+                <textarea id="tSetActionOnEnter"></textarea>
+            </fieldset>
+            <fieldset id="SetRangeOutput">
+                <legend>SetRangeOutput</legend>
+
+                <input type="range" id="SetRangeOutput_1" min="0" max="100" step="1" data-simple-output="true" />
+                <output name="SetRangeOutput_1_output" for="SetRangeOutput_1"></output>
+            </fieldset>
+            <fieldset id="SetFieldTips">
+                <legend>SetFieldTips</legend>
+
+                <input type="date" id="iSetFieldTips_1" /><br />
+                <div data-tipfor="iSetFieldTips_1">Dica para o input iSetFieldTips_1</div>
+                <input type="tel" id="iSetFieldTips_2" /><br />
+                <div data-tipfor="iSetFieldTips_2">Dica para o input iSetFieldTips_2</div>
+                <input type="text" id="iSetFieldTips_3" /><br />
+                <input type="url" id="iSetFieldTips_4" /><br />
+                
+                <textarea id="tSetFieldTips"></textarea>
+                <div data-tipfor="tSetFieldTips">Dica para o input tSetFieldTips</div>
+            </fieldset>
+            <fieldset id="SetInputCounters">
+                <legend>SetInputCounters</legend>
+
+                <input type="text" id="iSetInputCounters_1" maxlength="60" /><br />
+                <div>Restam <span data-counterfor="iSetInputCounters_1"></span> caracteres</div>
+                <input type="tel" id="iSetInputCounters_2" maxlength="10" /><br />
+                <div>Restam <span data-counterfor="iSetInputCounters_2"></span> caracteres</div>
+                <input type="text" id="iSetInputCounters_3" maxlength="20" /><br />
+                <input type="url" id="iSetInputCounters_4" maxlength="20" /><br />
+                
+                <textarea id="tSetInputCounters" maxlength="120"></textarea>
+                <div>Restam <span data-counterfor="tSetInputCounters"></span> caracteres</div>
+            </fieldset>
+            <fieldset id="SetFastSelect">
+                <legend>SetFastSelect</legend>
+
+                <select id="sSetFastSelect_1">
+                    <option value="">Selecione</option>
+                    <option value="1">Rianna</option>
+                    <option value="2">Luiza</option>
+                    <option value="3">Luciana</option>
+                    <option value="4">Rafael</option>
+                    <option value="5">Mauriccio</option>
+                    <option value="6">Antonio</option>
+                    <option value="7">Andrino</option>
+                    <option value="8">Simone</option>
+                    <option value="9">Adriana</option>
+                    <option value="10">Pamela</option>
+                    <option value="11">Umberto</option>
+                    <option value="12">Kelem</option>
+                    <option value="13">Suelem</option>
+                    <option value="14">Daiane</option>
+                    <option value="15">Sofia</option>
+                    <option value="16">Sandy</option>
+                    <option value="17">Thierry</option>
+                    <option value="18">João</option>
+                    <option value="19">Pedro</option>
+                    <option value="20">Vanessa</option>
+                </select>
+                <input type="text" data-fastselect="sSetFastSelect_1" />
+                <br /><br /><br />
+
+                <select id="sSetFastSelect_2">
+                    <option value="1">Rianna</option>
+                    <option value="2">Luiza</option>
+                    <option value="3">Luciana</option>
+                    <option value="4">Rafael</option>
+                    <option value="5">Mauriccio</option>
+                    <option value="6">Antonio</option>
+                    <option value="7">Andrino</option>
+                    <option value="8">Simone</option>
+                    <option value="9">Adriana</option>
+                    <option value="10">Pamela</option>
+                    <option value="11">Umberto</option>
+                    <option value="12">Kelem</option>
+                    <option value="13">Suelem</option>
+                    <option value="14">Daiane</option>
+                    <option value="15">Sofia</option>
+                    <option value="16">Sandy</option>
+                    <option value="17">Thierry</option>
+                    <option value="18">João</option>
+                    <option value="19">Pedro</option>
+                    <option value="20">Vanessa</option>
+                    <option value="20">Daniele</option>
+                </select>
+                <input data-fastselect="sSetFastSelect_2" />
+
+            </fieldset>
+            <fieldset id="SetMultipleSelectCommands">
+                <legend>SetMultipleSelectCommands</legend>
+
+                <select multiple="multiple" id="SetMultipleSelectCommands_1_dataorigin" data-get="false">
+                    <option value="v1">Valor 1</option>
+                    <option value="v2">Valor 2</option>
+                    <option value="v3">Valor 3</option>
+                    <option value="v4">Valor 4</option>
+                    <option value="v5">Valor 5</option>
+                    <option value="v6">Valor 6</option>
+                    <option value="v7">Valor 7</option>
+                </select>
+            
+                <a id="SetMultipleSelectCommands_1_add">Adicionar selecionados</a>
+                <a id="SetMultipleSelectCommands_1_remove">Remover selecionados</a>
+            
+                <select multiple="multiple" id="SetMultipleSelectCommands_1"></select>
+
+                <br /><br /><br /><br /><br />
+
+                <select multiple="multiple" id="SetMultipleSelectCommands_2_dataorigin" data-get="false">
+                </select>
+            
+                <a id="SetMultipleSelectCommands_2_add">Adicionar selecionados</a>
+                <a id="SetMultipleSelectCommands_2_remove">Remover selecionados</a>
+            
+                <select multiple="multiple" id="SetMultipleSelectCommands_2">
+                    <option value="v1">Valor 1</option>
+                    <option value="v2">Valor 2</option>
+                    <option value="v3">Valor 3</option>
+                    <option value="v4">Valor 4</option>
+                    <option value="v5">Valor 5</option>
+                    <option value="v6">Valor 6</option>
+                    <option value="v7">Valor 7</option>
+                </select>
+            </fieldset>
+            <fieldset id="SetCheckPasswordStrength">
+                <legend>SetCheckPasswordStrength</legend>
+
+                <input type="password" id="iSetCheckPasswordStrength_1"><br />
+                <div data-strength-of="iSetCheckPasswordStrength_1">Nenhuma informação foi digitada.</div>
+
+                <br /><br />
+
+                <input type="password" id="iSetCheckPasswordStrength_2"><br />
+                <div data-strength-of="iSetCheckPasswordStrength_2">Segundo input password.</div>
+            </fieldset>
+            <fieldset id="SetCheckRetypePassword">
+                <legend>SetCheckRetypePassword</legend>
+
+                <input type="password" id="iSetCheckRetypePassword" />
+                <input type="password" id="iSetCheckRetypePassword_retype" data-get="false" />
+
+
+            </fieldset>
+            <fieldset id="SetFormFeatures">
+                <legend>SetFormFeatures</legend>
+
+
+                <label for="iSetFormFeatures_1">Field [text][Count]</label>
+                <input type="text" id="iSetFormFeatures_1" maxlength="60" /><br />
+                <div>Restam <span data-counterfor="iSetFormFeatures_1"></span> caracteres</div>
+
+                <label for="iSetFormFeatures_2">Field [datetime-local][Tip]</label>
+                <input type="datetime-local" id="iSetFormFeatures_2" /><br />
+                <div data-tipfor="iSetFormFeatures_2">Formato yyyy-MM-ddTHH:mm:ss.</div>
+
+                <label for="iSetFormFeatures_3">Field [datetime]</label>
+                <input type="datetime" id="iSetFormFeatures_3" /><br />
+
+                <label for="iSetFormFeatures_4">Field [date]</label>
+                <input type="date" id="iSetFormFeatures_4" /><br />
+
+                <label for="iSetFormFeatures_5">Field [month]</label>
+                <input type="month" id="iSetFormFeatures_5" /><br />
+
+                <label for="iSetFormFeatures_6">Field [week]</label>
+                <input type="week" id="iSetFormFeatures_6" /><br />
+
+                <label for="iSetFormFeatures_7">Field [time]</label>
+                <input type="time" id="iSetFormFeatures_7" /><br />
+
+                <label for="iSetFormFeatures_8">Field [number]</label>
+                <input type="number" id="iSetFormFeatures_8" data-def="Brasil.Number" data-format="true" data-decimal="2" /><br />
+
+                <label for="iSetFormFeatures_9">Field [range]</label>
+                <input type="range" id="iSetFormFeatures_9" min="0" max="1000" step="10" data-simple-output="true" />
+                <output name="iSetFormFeatures_9_output" for="iSetFormFeatures_9"></output><br /><br />
+
+                <label for="iSetFormFeatures_10">Field [email]</label>
+                <input type="email" id="iSetFormFeatures_10" /><br />
+
+                <label for="iSetFormFeatures_11">Field [color]</label>
+                <input type="color" id="iSetFormFeatures_11" /><br />
+
+                <label for="iSetFormFeatures_12">Field [tel]</label>
+                <input type="tel" id="iSetFormFeatures_12" data-def="Brasil.Phone" /><br />
+
+                <label for="iSetFormFeatures_13">Field [text]</label>
+                <input type="text" id="iSetFormFeatures_13" /><br />
+
+                <label for="iSetFormFeatures_14">Field [url]</label>
+                <input type="url" id="iSetFormFeatures_14" /><br />
+
+
+                <label for="sSetFormFeatures">Select [fast]</label>
+                <select id="sSetFormFeatures">
+                    <option value="1">Rianna</option>
+                    <option value="2">Luiza</option>
+                    <option value="3">Luciana</option>
+                    <option value="4">Rafael</option>
+                    <option value="5">Mauriccio</option>
+                    <option value="6">Antonio</option>
+                    <option value="7">Andrino</option>
+                    <option value="8">Simone</option>
+                    <option value="9">Adriana</option>
+                    <option value="10">Pamela</option>
+                    <option value="11">Umberto</option>
+                    <option value="12">Kelem</option>
+                    <option value="13">Suelem</option>
+                    <option value="14">Daiane</option>
+                    <option value="15">Sofia</option>
+                    <option value="16">Sandy</option>
+                    <option value="17">Thierry</option>
+                    <option value="18">João</option>
+                    <option value="19">Pedro</option>
+                    <option value="20">Vanessa</option>
+                </select>
+                <input type="text" data-fastselect="sSetFormFeatures" data-validate="false" />
+                <br /><br /><br />
+
+
+                <label for="tSetFormFeatures">Textarea [Count]</label>
+                <textarea id="tSetFormFeatures" maxlength="120"></textarea><br />
+                <div>Restam <span data-counterfor="tSetFormFeatures"></span> caracteres</div>
+
+                <br /><br />
+                
+                <label for="Multiple_iSetFormFeatures">Textarea</label>
+                <select multiple="multiple" id="Multiple_iSetFormFeatures_dataorigin" data-get="false">
+                    <option value="v1">Valor 1</option>
+                    <option value="v2">Valor 2</option>
+                    <option value="v3">Valor 3</option>
+                    <option value="v4">Valor 4</option>
+                    <option value="v5">Valor 5</option>
+                    <option value="v6">Valor 6</option>
+                    <option value="v7">Valor 7</option>
+                </select>
+            
+                <a id="Multiple_iSetFormFeatures_add">Adicionar selecionados</a>
+                <a id="Multiple_iSetFormFeatures_remove">Remover selecionados</a>
+            
+                <select multiple="multiple" id="Multiple_iSetFormFeatures"></select>
+
+                <br /><br /><br /><br /><br />
+
+                <label for="iSetFormFeatures_15">Field [password]</label>
+                <input type="password" id="iSetFormFeatures_15"><br />
+                <div data-strength-of="iSetFormFeatures_15">Nenhuma informação foi digitada.</div>
+                <br /><br />
+                <input type="password" id="iSetFormFeatures_15_retype" data-get="false" />
+            </fieldset>
+        </form>
+
+
+        <script>
+            Interface.SetActionOnEnter('#SetActionOnEnter', function () { alert('Entrou'); });
+            Interface.SetRangeOutput('#SetRangeOutput');
+            Interface.SetFieldTips('#SetFieldTips');
+            Interface.SetInputCounters('#SetInputCounters');
+            Interface.SetFastSelect('#SetFastSelect');
+            Interface.SetMultipleSelectCommands('#SetMultipleSelectCommands');
+            Interface.SetCheckPasswordStrength('#SetCheckPasswordStrength');
+            Interface.SetCheckRetypePassword('#SetCheckRetypePassword');
+            Interface.SetFormFeatures('#SetFormFeatures');
+        </script>
+    </body>
+</html>

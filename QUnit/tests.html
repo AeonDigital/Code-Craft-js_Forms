@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Forms QUnit Tests</title>
+        <link rel="stylesheet" href="resources/qunit.css" />
+
+        <script src="resources/Get-min.js"></script>
+        <script src="resources/StringExtension-min.js"></script>
+        <script src="resources/WeekDate-min.js"></script>
+        <script src="resources/HashTable-min.js"></script>
+        <script src="resources/qunit.js"></script>
+        <script src="../Labels.js"></script>
+        <script src="../Forms.js"></script>
+    </head>
+    <body>
+        <div id="qunit"></div>
+        <div id="qunit-fixture"></div>
+
+        <section id="batTeste_1" style="display: none;">
+            <input type="hidden" />
+            <input type="hidden" id="iAccept" accept="img/jpg" />
+            <input type="hidden" id="iAutocomplete" autocomplete="on" />
+            <input type="hidden" id="iAutofocus" autofocus="true" />
+            <input type="hidden" id="iChecked" checked="checked" />
+            <input type="hidden" id="iClass" class=" teste full-class set   and error " accept="img/jpg" />
+            <input type="hidden" id="iDef" data-def=":.Dates.Date" />
+            <input type="hidden" id="iDisabled" disabled="disabled" />
+            <input type="hidden" id="iGet" data-get="false" />
+            <input type="hidden" id="iValidate" data-validate="false" />
+            <input type="hidden" id="iId" />
+            <input type="hidden" id="iMax" max="1000" />
+            <input type="hidden" id="iMaxlength" maxlength="2000" />
+            <input type="hidden" id="iMin" min="3000" />
+            <input type="hidden" id="iMultiple" multiple="multiple" />
+            <input type="hidden" id="iName" name="iName" />
+            <input type="hidden" id="iPattern" pattern="[a-z]" />
+            <input type="hidden" id="iPlaceholder" placeholder="Digite Aqui" />
+            <input type="hidden" id="iRadioValue" />
+            <input type="hidden" id="iReadonly" readonly="readonly" />
+            <input type="hidden" id="iRequired" required="required" />
+            <input type="hidden" id="iStep" step="4000" />
+            <input type="hidden" id="iTagName" />
+            <input type="file" id="iType" />
+            <input type="hidden" id="iTitle" title="Titulo Novo" />
+            <input type="hidden" id="iValid" data-valid="false" />
+            <input type="hidden" id="iValue" value="Este é o valor atual" />
+        </section>
+
+        <section id="batTeste_2" style="display: none;">
+            <input type="hidden" class="type-datetime-local" />
+            <input type="hidden" class="type-datetime" />
+            <input type="hidden" class="type-date" />
+            <input type="hidden" class="type-month" />
+            <input type="hidden" class="type-week" />
+            <input type="hidden" class="type-time" />
+            <input type="hidden" class="type-number" />
+            <input type="hidden" class="type-range" />
+            <input type="hidden" class="type-email" />
+            <input type="hidden" class="type-color" />
+            <input type="hidden" class="type-tel" />
+            <input type="hidden" class="type-url" />
+        </section>
+
+        <!--section id="batTeste_3" style="display: none;">
+            <input type="hidden" id="inpValidate" class="no-validate" />
+            <input type="hidden" id="inpGet" class="no-get" />
+            <input type="hidden" id="inpValid" class="in-valid" />
+        </section-->
+
+        <section id="batTeste_4" style="display: none;">
+            <button type="button">Button</button>
+            <button type="submit">Submit</button>
+            <input type="radio" value="valor" />
+            <input type="checkbox" value="valor" />
+        </section>
+
+        <section id="batTeste_5" style="display: none;">
+            <label for="sMultiple">Legenda para select multiplo</label>
+            <select id="sMultiple" multiple="multiple">
+                <option value="v1">V1</option>
+                <option value="v2" selected="selected">V2</option>
+                <option value="v3">V3</option>
+                <option value="v4" selected="selected">V4</option>
+                <option value="v5">V5</option>
+                <option value="v6" selected="selected">V6</option>
+            </select>
+
+            <input type="radio" name="rName" value="0" />
+            <input type="radio" name="rName" value="1" checked="checked" />
+            <input type="radio" name="rName" value="2" />
+            <input type="radio" name="rName" value="3" />
+            <input type="radio" name="rName" value="4" />
+        </section>
+
+        <section id="batTeste_6" style="display: none;">
+            <input type="hidden" class="type-datetime-local" min="2010-02-02T12:10:10" value="2010-02-02T12:10:09" />
+            <input type="hidden" class="type-datetime-local" min="2010-02-02T12:10:10" value="2010-02-02T12:10:10" />
+            <input type="hidden" class="type-datetime-local" min="2010-02-02T12:10:10" value="2010-02-02T12:10:11" />
+
+            <input type="hidden" class="type-datetime" min="2010-05-17 01:01:01" max="2010-05-17 23:59:58" value="2010-05-17 01:01:01" />
+            <input type="hidden" class="type-datetime" min="2010-05-17 01:01:01" max="2010-05-17 23:59:58" value="2010-05-17 23:59:58" />
+            <input type="hidden" class="type-datetime" min="2010-05-17 01:01:01" max="2010-05-17 23:59:58" value="2010-05-17 01:01:00" />
+            <input type="hidden" class="type-datetime" min="2010-05-17 01:01:01" max="2010-05-17 23:59:58" value="2010-05-17 23:59:59" />
+
+            <input type="hidden" class="type-date" min="2010-05-10" max="2010-05-20" value="2010-05-09" />
+            <input type="hidden" class="type-date" min="2010-05-10" max="2010-05-20" value="2010-05-21" />
+            <input type="hidden" class="type-date" min="10-05-2010" max="20-05-2010" value="10-05-2010" data-def="Brasil.Dates.Date" />
+            <input type="hidden" class="type-date" min="05-10-2010" max="05-20-2010" value="05-20-2010" data-def="EUA.Dates.Date" />
+            <input type="hidden" class="type-date" min="2010-05-10" max="2010-05-20" value="2010-05-16" />
+            <input type="hidden" class="type-date" min="2010-05-10" max="2010-05-20" value="2010-05-17" />
+
+            <input type="hidden" class="type-month" min="2010-04" max="2010-08" value="2010-01" />
+            <input type="hidden" class="type-month" min="2010-04" max="2010-08" value="2010-02" />
+            <input type="hidden" class="type-month" min="2010-04" max="2010-08" value="2010-03" />
+            <input type="hidden" class="type-month" min="2010-04" max="2010-08" value="2010-04" />
+            <input type="hidden" class="type-month" min="2010-04" max="2010-08" value="2010-05" />
+            <input type="hidden" class="type-month" min="2010-04" max="2010-08" value="2010-06" />
+            <input type="hidden" class="type-month" min="04-2010" max="08-2010" value="07-2010" data-def="Brasil.Dates.Month" />
+            <input type="hidden" class="type-month" min="2010-04" max="2010-08" value="2010-08" />
+            <input type="hidden" class="type-month" min="2010-04" max="2010-08" value="2010-09" />
+            <input type="hidden" class="type-month" min="2010-04" max="2010-08" value="2010-10" />
+            <input type="hidden" class="type-month" min="2010-04" max="2010-08" value="2010-11" />
+            <input type="hidden" class="type-month" min="2010-04" max="2010-08" value="2010-12" />
+
+            <input type="hidden" class="type-week" min="2010-W10-1" max="2010-W13-1" value="2010-W9-1" />
+            <input type="hidden" class="type-week" min="2010-W10-1" max="2010-W13-1" value="2010-W10-1" />
+            <input type="hidden" class="type-week" min="2010-W10-1" max="2010-W13-1" value="2010-W11-1" />
+            <input type="hidden" class="type-week" min="1-10W-2010" max="1-13W-2010" value="1-12W-2010" data-def="Brasil.Dates.Week" />
+            <input type="hidden" class="type-week" min="2010-W10-1" max="2010-W13-1" value="2010-W13-1" />
+            <input type="hidden" class="type-week" min="2010-W10-1" max="2010-W13-1" value="2010-W14-1" />
+            
+            <input type="hidden" class="type-time" min="01:10:10" max="01:10:50" value="01:10:10" />
+            <input type="hidden" class="type-time" min="01:10:10" max="01:10:50" value="01:10:50" />
+            <input type="hidden" class="type-time" min="01:10:10" max="01:10:50" value="01:10:11" />
+            <input type="hidden" class="type-time" min="01:10:10" max="01:10:50" value="01:10:49" />
+            <input type="hidden" class="type-time" min="01:10:10" max="01:10:50" value="01:10:09" />
+            <input type="hidden" class="type-time" min="01:10:10" max="01:10:50" value="01:10:51" />
+            <input type="hidden" class="type-time" min="01:10:10" max="01:10:50" value="01:11:20" />
+            <input type="hidden" class="type-time" min="01:10:10" max="01:10:50" value="01:11:40" />
+            
+            <input type="hidden" class="type-number" min="-5" max="5" value="-10" />
+            <input type="hidden" class="type-number" min="-5" max="5" value="-9" />
+            <input type="hidden" class="type-number" min="-5" max="5" value="-8" />
+            <input type="hidden" class="type-number" min="-5" max="5" value="-7" />
+            <input type="hidden" class="type-number" min="-5" max="5" value="-6" />
+            <input type="hidden" class="type-number" min="-5" max="5" value="-5" />
+            <input type="hidden" class="type-number" min="-5" max="5" value="-4" />
+            <input type="hidden" class="type-number" min="-5" max="5" value="-3" />
+            <input type="hidden" class="type-number" min="-5" max="5" value="-2" />
+            <input type="hidden" class="type-number" min="-5" max="5" value="-1" />
+            <input type="hidden" class="type-number" min="-5" max="5" value="0" />
+            <input type="hidden" class="type-number" min="-5" max="5" value="1" />
+            <input type="hidden" class="type-number" min="-5" max="5" value="2" />
+            <input type="hidden" class="type-number" min="-5" max="5" value="3" />
+            <input type="hidden" class="type-number" min="-5" max="5" value="4" />
+            <input type="hidden" class="type-number" min="-5" max="5" value="5" />
+            <input type="hidden" class="type-number" min="-5" max="5" value="6" />
+            <input type="hidden" class="type-number" min="-5" max="5" value="7" />
+            <input type="hidden" class="type-number" min="-5" max="5" value="8" />
+            <input type="hidden" class="type-number" min="-5" max="5" value="9" />
+            <input type="hidden" class="type-number" min="-5" max="5" value="10" />
+        </section>
+
+        <section id="batTeste_7" style="display: none;">
+            <input type="hidden" required="required" value="" />
+            <input type="hidden" required="required" value="Valor qualquer"/>
+            
+            <input type="hidden" class="type-datetime-local" value="2010-02-02T12:10:10" />
+            <input type="hidden" class="type-datetime-local" value="2010-02-02 12:10:10" />
+            <input type="hidden" class="type-datetime-local" value="2010-02-02" />
+
+            <input type="hidden" class="type-datetime" value="2010-05-17 23:59:58" />
+            <input type="hidden" class="type-datetime" value="2010-05-17" />
+
+            <input type="hidden" class="type-date" value="2010-05-09" />
+            <input type="hidden" class="type-date" value="2010-02-30" />
+            <input type="hidden" class="type-date" value="09-05-2010" data-def="Brasil.Dates.Date" />
+            <input type="hidden" class="type-date" value="05-09-2010" data-def="EUA.Dates.Date" />
+            <input type="hidden" class="type-date" value="30-02-2010" data-def="Brasil.Dates.Date" />
+
+            <input type="hidden" class="type-month" value="2010-01" />
+            <input type="hidden" class="type-month" value="2010-13" />
+            <input type="hidden" class="type-month" value="01-2010" data-def="Brasil.Dates.Month" />
+            <input type="hidden" class="type-month" value="13-2010" data-def="Brasil.Dates.Month" />
+
+            <input type="hidden" class="type-week" value="2010-W10-7" />
+            <input type="hidden" class="type-week" value="2010-W10-8" />
+            <input type="hidden" class="type-week" value="2010-W54-1" />
+            <input type="hidden" class="type-week" value="7-10W-2010" data-def="Brasil.Dates.Week" />
+            <input type="hidden" class="type-week" value="8-10W-2010" data-def="Brasil.Dates.Week" />
+            <input type="hidden" class="type-week" value="7-54W-2010" data-def="Brasil.Dates.Week" />
+
+            <input type="hidden" class="type-time" value="12:00:00" />
+            <input type="hidden" class="type-time" value="12:59:59" />
+            <input type="hidden" class="type-time" value="12:60:60" />
+            <input type="hidden" class="type-time" value="12:1:1" />
+            <input type="hidden" class="type-time" value="12:10" />
+            <input type="hidden" class="type-time" value="12:00" />
+            
+            <input type="hidden" class="type-email" value="teste@gmail.com" />
+            <input type="hidden" class="type-email" value="teste@gmail" />
+            <input type="hidden" class="type-email" value="teste2gmail.com" />
+            
+            <input type="hidden" class="type-url" value="http://aeondigital.com.br" />
+            <input type="hidden" class="type-url" value="aeondigital.com.br" />
+            <input type="hidden" class="type-url" value="aeondigital" />
+
+            <input type="hidden" class="type-number" value="-10000000000000000" />
+            <input type="hidden" class="type-number" value="0" />
+            <input type="hidden" class="type-number" value="10000000000000000" />
+            <input type="hidden" class="type-number" value="-0.10000000000000000" />
+            <input type="hidden" class="type-number" value="0.10000000000000000e" />
+            <input type="hidden" class="type-number" value="-0,100000O0000000000" />
+            <input type="hidden" class="type-number" value="0,1000000r0000000000" />
+
+            <input type="hidden" class="type-number" value="a" />
+            <input type="hidden" class="type-number" value="10a" />
+            <input type="hidden" class="type-number" value="a10" />
+            <input type="hidden" class="type-number" value="+10" />
+            <input type="hidden" class="type-number" value="=10" />
+            <input type="hidden" class="type-number" value="10%" />
+            <input type="hidden" class="type-number" value=".0" />
+            <input type="hidden" class="type-number" value="*" />
+            
+            <input type="hidden" class="type-color" value="#000000" />
+            <input type="hidden" class="type-color" value="#FFFFFF" />
+            <input type="hidden" class="type-color" value="#1F1F1F" />
+            <input type="hidden" class="type-color" value="#909090" />
+            <input type="hidden" class="type-color" value="#000" />
+            <input type="hidden" class="type-color" value="#FFF" />
+            <input type="hidden" class="type-color" value="#GGGGGG" />
+            <input type="hidden" class="type-color" value="#FFFFFFF" />
+        </section>
+
+
+        <script>
+            // <![CDATA[
+
+            module('Objeto FieldElement.');
+
+
+
+            var propDef = {
+                accept: null,
+                autocomplete: false,
+                autofocus: false,
+                checked: false,
+                class: [],
+                def: null,
+                disabled: false,
+                get: true,
+                validate: true,
+                id: null,
+                max: null,
+                maxLength: null,
+                min: null,
+                multiple: false,
+                name: null,
+                pattern: null,
+                placeholder: null,
+                radiovalue: null,
+                readonly: false,
+                required: false,
+                step: null,
+                tagName: 'input',
+                type: 'hidden',
+                title: null,
+                valid: true,
+                value: ''
+            };
+
+
+
+            var propAlter = {
+                accept: 'img/jpg',
+                autocomplete: true,
+                autofocus: true,
+                checked: true,
+                class: ['teste', 'full-class', 'set', 'and', 'error'],
+                def: String.Pattern.World.Dates.Date,
+                disabled: true,
+                get: false,
+                validate: false,
+                id: 'iId',
+                max: '1000',
+                maxLength: '2000',
+                min: '3000',
+                multiple: true,
+                name: 'iName',
+                pattern: '[a-z]',
+                placeholder: 'Digite Aqui',
+                radiovalue: null,
+                readonly: true,
+                required: true,
+                step: '4000',
+                tagName: 'input',
+                type: 'file',
+                title: 'Titulo Novo',
+                valid: false,
+                value: 'Este é o valor atual'
+            };
+
+
+
+            var typeClass = ['type-datetime-local', 'type-datetime', 'type-date', 'type-month',
+            'type-week', 'type-time', 'type-number', 'type-range', 'type-email', 'type-color',
+            'type-tel', 'type-url'];
+
+
+
+            var attrClass = ['no-validate', 'no-get', 'in-valid'];
+
+
+
+            test('Valores Padrões', function () {
+                // Testa sets de valores padrões das propriedades
+                var oI = Forms.FieldElement(Get('input[type="hidden"]')[0]);
+
+
+                for (var it in propDef) {
+                    if (it.toString() != 'class') {
+                        equal(oI[it], propDef[it], 'Teste da propriedade "' + it + '"');
+                    }
+                    else {
+                        equal(oI[it].length, propDef[it].length, 'Teste da propriedade "' + it + '"');
+                    }
+                }
+            });
+
+
+            test('Valores Alterados', function () {
+                // Testa variações dos atributos
+                var altInp = Get('#batTeste_1 input');
+                var iCount = 1;
+
+                // Para cada propriedade que será testada
+                for (var it in propDef) {
+
+                    var oInp = Forms.FieldElement(altInp[iCount]);
+
+                    // Se não for o atributo "class"
+                    if (it.toString() != 'class') {
+                        equal(oInp[it], propAlter[it], 'Propriedade "' + it + '"');
+                    }
+                    else {
+                        equal(oInp[it].length, propAlter[it].length, 'Classes "' + propAlter[it].length + '"');
+
+                        for (var i = 0; i < oInp[it].length; i++) {
+                            equal(oInp[it][i], propAlter[it][i], 'Classe "' + propAlter[it][i] + '"');
+                        }
+                    }
+
+                    iCount++;
+                }
+            });
+
+
+            test('Classes Especiais', function () {
+
+                // Classes que setam Type
+                var altInp = Get('#batTeste_2 input');
+                var iCount = 0;
+
+                for (var it in typeClass) {
+                    var oI = Forms.FieldElement(altInp[iCount]);
+                    equal(oI.type, typeClass[it].replace('type-', ''), 'Classe : "' + typeClass[it] + '" = Type : "' + oI.type + '"');
+
+                    // Verifica "def" para campos de data
+                    if (iCount <= 5) {
+                        var wrp = String.Pattern.World;
+                        switch (oI.type) {
+                            case 'datetime-local':
+                                equal(oI.def, wrp.Dates.DateTimeLocal, oI.type);
+                                break;
+
+                            case 'datetime':
+                                equal(oI.def, wrp.Dates.DateTime, oI.type);
+                                break;
+
+                            case 'date':
+                                equal(oI.def, wrp.Dates.Date, oI.type);
+                                break;
+
+                            case 'month':
+                                equal(oI.def, wrp.Dates.Month, oI.type);
+                                break;
+
+                            case 'week':
+                                equal(oI.def, wrp.Dates.Week, oI.type);
+                                break;
+
+                            case 'time':
+                                equal(oI.def, wrp.Dates.Time, oI.type);
+                                break;
+                            case 'number':
+                            case 'range':
+                                equal(oI.def, wrp.Number, oI.type);
+                                break;
+
+                            case 'email':
+                                equal(oI.def, Wrp.Email, oI.type);
+                                break;
+
+                            case 'color':
+                                equal(oI.def, Wrp.Color, oI.type);
+                                break;
+
+                            case 'url':
+                                equal(oI.def, Wrp.URL, oI.type);
+                                break;
+                        }
+                    }
+
+                    iCount++;
+                }
+            });
+
+
+            test('Elementos não validáveis', function () {
+
+                // Classes que setam Type
+                var altInp = Get('#batTeste_4 input');
+
+                for (var it in altInp) {
+                    var oI = Forms.FieldElement(altInp[it]);
+                    equal(oI.validate, false, '');
+                }
+            });
+
+
+            test('Elementos de seleção multipla', function () {
+
+                // Select multiplo
+                var sMultiple = Get('#sMultiple');
+                var oMulti = Forms.FieldElement(sMultiple);
+
+                var espArr = ['v2', 'v4', 'v6'];
+                equal(oMulti.value.length, espArr.length, '');
+
+                for (var i = 0; i < oMulti.value.length; i++) {
+                    equal(oMulti.value[i], espArr[i], '');
+                }
+
+
+                // Multiplos radio
+                var rRadios = Get('#batTeste_5 input[type="radio"]');
+                var oRad = Forms.FieldElement(rRadios[0]);
+
+                equal(5, rRadios.length, 'Numero de radios selecionados');
+                equal('1', oRad.radiovalue, 'Valor selecionado');
+            });
+
+
+            test('Legendas', function () {
+
+                // Select multiplo
+                var sMultiple = Get('#sMultiple');
+                var oMulti = Forms.FieldElement(sMultiple);
+
+                equal('Legenda para select multiplo', oMulti.title, 'Legenda para o campo');
+
+            });
+
+
+
+
+            module('Métodos');
+
+
+
+            test('IsValidMinOrMax', function () {
+                var oI = Get('#batTeste_6 input');
+
+                var expect = [false, true, true,
+                                true, true, false, false,
+                                false, false, true, true, true, true,
+                                false, false, false, true, true, true, true, true, false, false, false, false,
+                                false, true, true, true, true, false,
+                                true, true, true, true, false, false, false, false,
+                                false, false, false, false, false,
+                                true, true, true, true, true,
+                                true,
+                                true, true, true, true, true,
+                                false, false, false, false, false
+                            ];
+
+                equal(expect.length, oI.length, '');
+
+                for (var it in oI) {
+                    var o = Forms.FieldElement(oI[it]);
+                    equal(Forms.IsValidMinOrMax(o), expect[it], 'Objeto da posição ' + it);
+                }
+            });
+
+
+            test('FieldValidate', function () {
+                var oI = Get('#batTeste_7 input');
+
+                var expect = [null, true,
+                                true, false, false,
+                                true, false,
+                                true, false, true, true, false,
+                                true, false, true, false,
+                                true, false, false, true, false, false,
+                                true, true, false, false, false, false,
+                                true, false, false,
+                                true, true, false,
+                                true, true, true, true, false, false, false,
+                                false, false, false, true, false, false, false, false,
+                                true, true, true, true, false, false, false, false];
+
+                equal(expect.length, oI.length, '');
+                
+                
+                for (var it in oI) {
+                    equal(Forms.FieldValidate(oI[it]), expect[it], 'Objeto da posição ' + it + ' ; Valor = ' + oI[it].value);
+                }
+
+            });
+
+
+
+            // ]]>
+        </script>
+    </body>
+</html>
