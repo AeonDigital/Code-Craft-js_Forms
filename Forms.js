@@ -360,7 +360,7 @@ var Forms = new (function () {
                 var v = o.value;
 
                 if (o.validate) {
-                    if (v == '' && o.required) { iR = null; }
+                    if (v == '') { iR = (o.required) ? null : true; }
                     else {
                         if (o.def != null) {
                             // Testa o valor conforme o tipo
