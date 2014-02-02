@@ -481,7 +481,7 @@ var Forms = new (function () {
                     // não sendo um campo "range"
                     if (info.def != null && info.format && info.type != 'range') {
                         if (info.type == 'number') {
-                            info.self.value = info.def.Format(info.self.value, info.decimal);
+                            info.self.value = info.def.Format(info.self.value, undefined, info.decimal);
                         }
                         else {
                             info.self.value = info.def.Format(info.self.value);
@@ -1369,7 +1369,7 @@ var Forms = new (function () {
                 // Efetua a formatação dos valores do campo quando este perder o foco
                 var evt_Private_FieldFormatOnBlur = function (o) {
                     o = Forms.FieldElement(o.target);
-                    o.self.value = o.def.Format(o.value, o.decimal);
+                    o.self.value = o.def.Format(o.value, undefined, o.decimal);
                 };
 
 
