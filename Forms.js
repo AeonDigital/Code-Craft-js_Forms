@@ -81,6 +81,7 @@ var Forms = new (function () {
         * @property {Boolean}                       readonly = false                    Propriedade "readonly";
         * @property {Boolean}                       required = false                    Propriedade "required";
         * @property {?Number}                       step = null                         Propriedade "step";
+        * @property {String}                        systemvalue = ""                    Valor de sistema. Campos date/time são guardados com o formato ISO yyyy-MM-dd HH:mm:ss; Campos numericos usam o separador "." para a parte decimal.
         * @property {String}                        tagName                             Nome da tag do elemento.
         * @property {?String}                       type = null                         Propriedade "type";
         * @property {?String}                       title = null                        Propriedade "title";
@@ -102,7 +103,7 @@ var Forms = new (function () {
         FieldElement: function (o) {
             var fl = o;
             if (typeof (o) === 'string') { fl = Get(o); }
-
+            var isdate = false;
 
             var o = {
                 self: fl,
@@ -127,6 +128,7 @@ var Forms = new (function () {
                 radiovalue: null,
                 readonly: GetBooleanProp(fl, 'readonly', false),
                 required: GetBooleanProp(fl, 'required', false),
+                systemvalue: GetProp(fl, 'value', ''),
                 step: GetProp(fl, 'step', null),
                 tagName: fl.tagName.toLowerCase(),
                 type: GetProp(fl, 'type', null),
@@ -138,7 +140,10 @@ var Forms = new (function () {
 
 
             // Corrige valor do campo
-            if (o.value != fl.value) { o.value = fl.value; }
+            if (o.value != fl.value) {
+                o.value = fl.value;
+                o.systemvalue = fl.value;
+            }
 
 
 
@@ -146,7 +151,7 @@ var Forms = new (function () {
             for (var it in o.class) {
                 var cl = o.class[it].toLowerCase();
                 switch (cl) {
-                    // Classes que identificam campos de Data                                                                                                                                                                                                    
+                    // Classes que identificam campos de Data                                                                                                                                                                                                                         
                     case 'type-datetime-local':
                     case 'type-datetime':
                     case 'type-date':
@@ -256,6 +261,64 @@ var Forms = new (function () {
 
 
 
+            // Corrige o valor da propriedade "systemvalue" conforme o seu tipo.
+            switch (o.type) {
+                case 'datetime-local':
+                case 'datetime':
+                case 'date':
+                case 'month':
+                case 'week':
+                    var dMask = String.Pattern.World.Dates.DateTime.Mask;
+                    var d = null;
+                    var vd = o.value;
+
+                    // Verifica se o valor corresponde ao tipo informado
+                    if (o.def.Check(o.value)) {
+
+                        // Caso seja um valor Week
+                        if (o.type == 'week') {
+                            if (typeof (WeekDate) !== 'undefined') {
+                                var d = WeekDate.DateOfWeek(vd);
+                            }
+                        }
+                        // Para as datas comuns...
+                        else {
+                            var d = String.Pattern.FormatDateTime(vd, o.def.Mask);
+                        }
+
+                        if (d != null) {
+                            o.systemvalue = d.ToString(dMask);
+                        }
+
+                    }
+
+                    break;
+
+                case 'number':
+                case 'range':
+                    var nMask = String.Pattern.World.Number.Mask;
+
+                    // Verifica se o valor corresponde ao tipo informado.
+                    if (o.def.Check(o.value)) {
+                        dec = '.';
+                        tho = ',';
+
+                        // Se o padrão numérico definido for diferente do padrão "world"...
+                        if (o.def != String.Pattern.World.Number) {
+                            dec = o.def.Decimal;
+                            tho = o.def.Thousand;
+                        }
+
+                        // remove todos os marcadores de milhar e define o "." como marcador decimal.
+                        o.systemvalue = o.value.ReplaceAll(tho, '').replace(dec, '.');
+
+                    }
+
+                    break;
+            }
+
+
+
             // Resgata o titulo ou um label para o campo.
             if (o.title == null) {
                 var lbl = Get('label[for="' + o.id + '"]');
@@ -285,7 +348,7 @@ var Forms = new (function () {
 
             // Conforme o tipo do input
             switch (o.type) {
-                // Para inputs de data...                                                                                                                                                                                                                                                                          
+                // Para inputs de data...                                                                                                                                                                                                                                                                                               
                 case 'datetime-local':
                 case 'datetime':
                 case 'date':
@@ -314,7 +377,7 @@ var Forms = new (function () {
 
                     break;
 
-                // Para inputs numéricos                                                                                                                                                                                                                                                                     
+                // Para inputs numéricos                                                                                                                                                                                                                                                                                          
                 case 'number':
                 case 'range':
                     if (val.IsNumber()) {
@@ -423,6 +486,8 @@ var Forms = new (function () {
 
         /**
         * Recolhe as informações dos campos do formulário alvo e retorna um objeto FormPack.
+        * Valores de data serão sempre resgatados com o formato yyyy-MM-dd HH:mm:ss
+        * Valores numericos serão sempre resgatados com o formato de sistema.
         * 
         * @function RetrieveFormPack
         *
@@ -486,10 +551,10 @@ var Forms = new (function () {
                         else {
                             info.self.value = info.def.Format(info.self.value);
                         }
-                        info.value = info.self.value
+                        info.value = info.self.value;
                     }
 
-                    Data.Add(info.id, info.value);
+                    Data.Add(info.id, info.systemvalue);
                 }
                 else {
                     var msg = Labels.FieldError;

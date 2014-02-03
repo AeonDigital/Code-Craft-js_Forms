@@ -40,6 +40,8 @@
             <input type="hidden" id="iReadonly" readonly="readonly" />
             <input type="hidden" id="iRequired" required="required" />
             <input type="hidden" id="iStep" step="4000" />
+            <!--input type="hidden" id="iSystemvalue" class="type-date" value="10-05-2010" data-def="Brasil.Dates.Date"  /-->
+            <input type="hidden" id="iSystemvalue" class="type-number" value="10.524,36" data-def="Brasil.Number"  />
             <input type="hidden" id="iTagName" />
             <input type="file" id="iType" />
             <input type="hidden" id="iTitle" title="Titulo Novo" />
@@ -263,6 +265,7 @@
                 readonly: false,
                 required: false,
                 step: null,
+                systemvalue:'',
                 tagName: 'input',
                 type: 'hidden',
                 title: null,
@@ -293,6 +296,8 @@
                 radiovalue: null,
                 readonly: true,
                 required: true,
+                //systemvalue:'2010-05-10 00:00:00',
+                systemvalue:'10524.36',
                 step: '4000',
                 tagName: 'input',
                 type: 'file',
