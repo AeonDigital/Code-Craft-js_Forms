@@ -146,12 +146,18 @@ var Forms = new (function () {
             }
 
 
+            // Corrige checked dos checkbox
+            if (o.type == 'checkbox') {
+                o.checked = fl.checked;
+            }
+
+
 
             // Corrige propriedades a partir das classes especiais
             for (var it in o.class) {
                 var cl = o.class[it].toLowerCase();
                 switch (cl) {
-                    // Classes que identificam campos de Data                                                                                                                                                                                                                         
+                    // Classes que identificam campos de Data                                                                                                                                                                                                                          
                     case 'type-datetime-local':
                     case 'type-datetime':
                     case 'type-date':
@@ -348,7 +354,7 @@ var Forms = new (function () {
 
             // Conforme o tipo do input
             switch (o.type) {
-                // Para inputs de data...                                                                                                                                                                                                                                                                                               
+                // Para inputs de data...                                                                                                                                                                                                                                                                                                
                 case 'datetime-local':
                 case 'datetime':
                 case 'date':
@@ -377,7 +383,7 @@ var Forms = new (function () {
 
                     break;
 
-                // Para inputs numéricos                                                                                                                                                                                                                                                                                          
+                // Para inputs numéricos                                                                                                                                                                                                                                                                                           
                 case 'number':
                 case 'range':
                     if (val.IsNumber()) {
