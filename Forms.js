@@ -157,7 +157,7 @@ var Forms = new (function () {
             for (var it in o.class) {
                 var cl = o.class[it].toLowerCase();
                 switch (cl) {
-                    // Classes que identificam campos de Data                                                                                                                                                                                                                           
+                    // Classes que identificam campos de Data                                                                                                                                                                                                                                                                                             
                     case 'type-datetime-local':
                     case 'type-datetime':
                     case 'type-date':
@@ -354,7 +354,7 @@ var Forms = new (function () {
 
             // Conforme o tipo do input
             switch (o.type) {
-                // Para inputs de data...                                                                                                                                                                                                                                                                                                 
+                // Para inputs de data...                                                                                                                                                                                                                                                                                                                                                                   
                 case 'datetime-local':
                 case 'datetime':
                 case 'date':
@@ -383,7 +383,7 @@ var Forms = new (function () {
 
                     break;
 
-                // Para inputs numéricos                                                                                                                                                                                                                                                                                            
+                // Para inputs numéricos                                                                                                                                                                                                                                                                                                                                                              
                 case 'number':
                 case 'range':
                     if (val.IsNumber()) {
@@ -966,6 +966,200 @@ var Forms = new (function () {
 
 
         /**
+        * Prepara um campo input para receber múltiplos valores (como uma taglist)
+        *
+        * @function SetMultipleInput
+        *
+        * @memberof Interface
+        *
+        * @param {String|Node|Node[]}           [o]                                 Seletor CSS para o node pai dos campos alvo.
+        *                                                                           Objeto Node pai dos elementos alvo.
+        *                                                                           O próprio conjunto de objetos alvo.
+        *
+        * @example Exemplo de marcação 
+        *
+        * <input type="hiddem" id="MultipleInput" name="MultipleInput" data-multiple-value="true" value="html, css, javascript" />
+        * <input type="text" id="MultipleInput_typefield" list="MultipleInput_typefield" data-noget="true" />
+        *
+        * <datalist id="MultipleInput_list"> ... pré-options ... </datalist>
+        * <ul id="MultipleInput_show">
+        *   <li>Primeiro<span></span></li>
+        * </ul>
+        */
+        SetMultipleInput: function (o) {
+            var inp = null;
+            var css = 'input[data-multiple-value]';
+
+
+            if (o === undefined) { inp = Get(css); }
+            else if (typeof (o) == 'string') { inp = Get(o + ' ' + css); }
+            else if (o.constructor === Array) { inp = o; }
+            else { inp = (GetProp(o, 'type', null) == null) ? Get(css, o) : [o]; }
+
+
+            // Havendo elementos alvo
+            if (inp != null && inp.length > 0) {
+
+                // Seta as tags iniciais
+                var evt_Private_InitiValues = function (id) {
+                    var iReal = Get(id);
+                    var iRealValue = iReal.value.split(',');
+
+                    // Verifica itens duplicados e valores vazios
+                    var nValue = '';
+                    for (var it in iRealValue) {
+                        if (IsNotNullValue(iRealValue[it]) && iRealValue[it].Trim() != '') {
+                            nValue += iRealValue[it] + ',';
+                        }
+                    }
+
+                    iReal.value = nValue;
+                    iRealValue = nValue.split(',');
+
+
+                    for (var it in iRealValue) {
+                        evt_Private_AddValueMarkup(id, iRealValue[it]);
+                    }
+
+
+                };
+
+
+                // Verifica necessidade ou não de disparar o evento de adicionar novo valor.
+                var evt_Private_OnBlur = function (o) {
+                    if (o.target.value != '') {
+                        evt_Private_AddNewValue(o);
+                        setTimeout(function () { o.target.focus(); }, 10);
+                    }
+                };
+
+
+                // Evento que adiciona um novo valor no campo de input
+                var evt_Private_AddNewValue = function (o) {
+                    key = o.keyCode;
+                    o = o.target;
+
+                    if (o.value != '' && (key == 9 || key == 13 || key == 188)) {
+                        var id = '#' + o.id.replace('_typefield', '');
+                        var iReal = Get(id);
+                        var iRealValue = iReal.value.split(',');
+                        var iNewValue = o.value.ReplaceAll(',', '').Trim();
+
+                        // Verifica itens duplicados e valores vazios
+                        var nValue = '';
+                        var isNotMatch = true;
+                        for (var it in iRealValue) {
+                            if (IsNotNullValue(iRealValue[it]) && iRealValue[it].Trim() != '') {
+                                nValue += iRealValue[it] + ',';
+                            }
+                            if (iRealValue[it] == iNewValue) {
+                                isNotMatch = false;
+                            }
+                        }
+
+                        // Se o novo valor não estiver duplicado...
+                        if (isNotMatch) {
+                            nValue += iNewValue + ',';
+                            evt_Private_AddValueMarkup(id, iNewValue);
+                        }
+
+                        iReal.value = nValue;
+                        o.value = '';
+                    }
+                };
+
+
+                // Evento que adiciona um novo valor no campo de input
+                var evt_Private_AddValueMarkup = function (id, nValue) {
+                    if (IsNotNullValue(nValue) && nValue.Trim() != '') {
+                        var iShow = Get(id + '_show');
+
+                        var nLI = document.createElement('li');
+                        var remBtn = document.createElement('span');
+
+                        nLI.innerHTML = nValue;
+                        remBtn.addEventListener('click', evt_Private_RemoveValue, false);
+
+                        nLI.appendChild(remBtn);
+                        iShow.appendChild(nLI);
+                    }
+                };
+
+
+                // Evento que adiciona um novo valor no campo de input
+                var evt_Private_RemoveValue = function (o) {
+                    o = o.target;
+
+                    var ulNode = o;
+                    var liNode = null;
+
+                    var remValue = null;
+                    var id = null;
+
+
+                    // Resgata os objetos para a remoção da tag
+                    while (id == null) {
+                        var tN = ulNode.tagName.toLowerCase();
+
+                        if (tN == 'li') {
+                            liNode = ulNode;
+                            remValue = liNode.textContent
+                        }
+
+                        if (tN == 'ul') {
+                            id = ulNode.id.replace('_show', '');
+                        }
+                        else {
+                            ulNode = ulNode.parentNode;
+                        }
+                    }
+
+
+                    var iReal = Get('#' + id);
+                    var iRealValue = iReal.value.split(',');
+
+
+                    // Verifica item a item 
+                    var nValue = '';
+                    for (var it in iRealValue) {
+                        if (IsNotNullValue(iRealValue[it]) && iRealValue[it].Trim() != '' && iRealValue[it] != remValue) {
+                            nValue += iRealValue[it] + ',';
+                        }
+                    }
+
+
+                    ulNode.removeChild(liNode);
+                    iReal.value = nValue;
+                };
+
+
+
+
+
+
+                // Para cada input múltiplo
+                for (var it in inp) {
+                    var id = '#' + inp[it].id;
+
+                    var iShow = Get(id + '_show');
+                    var iTypeField = Get(id + '_typefield');
+
+                    // Tendo os campos mínimos... prossegue com processamento
+                    if (iShow != null && iTypeField != null) {
+                        iTypeField.addEventListener('keyup', evt_Private_AddNewValue, false);
+                        iTypeField.addEventListener('blur', evt_Private_OnBlur, false);
+
+                        evt_Private_InitiValues(id);
+                    }
+                }
+            }
+        },
+
+
+
+
+
+        /**
         * Seta comandos para adicionar ou remover itens selecionados entre selects multiplos.
         *
         * @function SetMultipleSelectCommands
@@ -1425,6 +1619,9 @@ var Forms = new (function () {
 
                 // Ativa seleção rápida para selects com grande número de options
                 Interface.SetFastSelect(form);
+
+                // Ativa inputs de múltiplos valores
+                Interface.SetMultipleInput(form);
 
                 // Ativa select multiplos
                 Interface.SetMultipleSelectCommands(form);

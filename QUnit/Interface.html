@@ -42,6 +42,13 @@
             form input[type="password"][data-valid="false"] {background-color:#a22d99;}
             form input[type="password"][data-valid="true"] {background-color:#1b8013;}
             
+            
+            
+            .box-taglist {display: block; min-width: 100px; min-height: 30px; list-style: none; padding: 4px 10px; border: 1px solid #CCC;}
+            .box-taglist li {float: left; padding: 0 5px; margin: 5px; background-color:#205ea2; color: #EEE; font-size: 14px; line-height: 22px;}
+            .box-taglist li span {float: right; padding: 0 5px; margin-left: 5px; border-left: 1px solid #fff; cursor: pointer; text-align: center;}
+            .box-taglist li span:before {content:" x ";}
+            
         </style>
     </head>
     <body>
@@ -66,6 +73,36 @@
                 <input type="url" id="iSetActionOnEnter_13" /><br />
 
                 <textarea id="tSetActionOnEnter"></textarea>
+            </fieldset>
+            <fieldset id="SetMultipleInput">
+                <legend>Input Múltiplo</legend>
+
+                <input type="text" id="MultipleInput" name="MultipleInput" data-multiple-value="true" value="html, css, javascript" />
+                <ul id="MultipleInput_show" class="box-taglist"><!-- --></ul>
+
+                <input type="text" id="MultipleInput_typefield" list="MultipleInput_list" data-noget="true" />
+                <datalist id="MultipleInput_list">
+                    <option>Rianna</option>
+                    <option>Luiza</option>
+                    <option>Luciana</option>
+                    <option>Rafael</option>
+                    <option>Mauriccio</option>
+                    <option>Antonio</option>
+                    <option>Andrino</option>
+                    <option>Simone</option>
+                    <option>Adriana</option>
+                    <option>Pamela</option>
+                    <option>Umberto</option>
+                    <option>Kelem</option>
+                    <option>Suelem</option>
+                    <option>Daiane</option>
+                    <option>Sofia</option>
+                    <option>Sandy</option>
+                    <option>Thierry</option>
+                    <option>João</option>
+                    <option>Pedro</option>
+                    <option>Vanessa</option>
+                </datalist>
             </fieldset>
             <fieldset id="SetRangeOutput">
                 <legend>SetRangeOutput</legend>
@@ -328,6 +365,7 @@
             Interface.SetFieldTips('#SetFieldTips');
             Interface.SetInputCounters('#SetInputCounters');
             Interface.SetFastSelect('#SetFastSelect');
+            Interface.SetMultipleInput('#SetMultipleInput');
             Interface.SetMultipleSelectCommands('#SetMultipleSelectCommands');
             Interface.SetCheckPasswordStrength('#SetCheckPasswordStrength');
             Interface.SetCheckRetypePassword('#SetCheckRetypePassword');
