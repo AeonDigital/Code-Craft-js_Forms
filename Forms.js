@@ -157,7 +157,7 @@ var Forms = new (function () {
             for (var it in o.class) {
                 var cl = o.class[it].toLowerCase();
                 switch (cl) {
-                    // Classes que identificam campos de Data                                                                                                                                                                                                                                                                                             
+                    // Classes que identificam campos de Data                                                                                                                                                                                                                                                                                                
                     case 'type-datetime-local':
                     case 'type-datetime':
                     case 'type-date':
@@ -354,7 +354,7 @@ var Forms = new (function () {
 
             // Conforme o tipo do input
             switch (o.type) {
-                // Para inputs de data...                                                                                                                                                                                                                                                                                                                                                                   
+                // Para inputs de data...                                                                                                                                                                                                                                                                                                                                                                      
                 case 'datetime-local':
                 case 'datetime':
                 case 'date':
@@ -383,7 +383,7 @@ var Forms = new (function () {
 
                     break;
 
-                // Para inputs numéricos                                                                                                                                                                                                                                                                                                                                                              
+                // Para inputs numéricos                                                                                                                                                                                                                                                                                                                                                                 
                 case 'number':
                 case 'range':
                     if (val.IsNumber()) {
@@ -654,16 +654,19 @@ var Forms = new (function () {
                 for (var it in fields) {
                     var fld = fields[it];
                     var type = GetProp(fld, 'type', null);
+                    var noget = GetProp(fld, 'data-noget', null);
 
-                    switch (type) {
-                        case 'datetime-local': case 'datetime': case 'date':
-                        case 'month': case 'week': case 'time': case 'number':
-                        case 'range': case 'email': case 'color': case 'tel':
-                        case 'url': case 'text': case 'password':
+                    if (noget == null) {
+                        switch (type) {
+                            case 'datetime-local': case 'datetime': case 'date':
+                            case 'month': case 'week': case 'time': case 'number':
+                            case 'range': case 'email': case 'color': case 'tel':
+                            case 'url': case 'text': case 'password':
 
-                            fld.addEventListener('keyup', evt_Private_OnEnter, false);
+                                fld.addEventListener('keyup', evt_Private_OnEnter, false);
 
-                            break;
+                                break;
+                        }
                     }
                 }
             }
@@ -978,7 +981,7 @@ var Forms = new (function () {
         *
         * @example Exemplo de marcação 
         *
-        * <input type="hiddem" id="MultipleInput" name="MultipleInput" data-multiple-value="true" value="html, css, javascript" />
+        * <input type="hidden" id="MultipleInput" name="MultipleInput" data-multiple-value="true" value="html, css, javascript" />
         * <input type="text" id="MultipleInput_typefield" list="MultipleInput_typefield" data-noget="true" />
         *
         * <datalist id="MultipleInput_list"> ... pré-options ... </datalist>
@@ -1103,7 +1106,7 @@ var Forms = new (function () {
 
                         if (tN == 'li') {
                             liNode = ulNode;
-                            remValue = liNode.textContent
+                            remValue = liNode.textContent;
                         }
 
                         if (tN == 'ul') {
