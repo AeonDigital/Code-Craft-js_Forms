@@ -157,7 +157,7 @@ var Forms = new (function () {
             for (var it in o.class) {
                 var cl = o.class[it].toLowerCase();
                 switch (cl) {
-                    // Classes que identificam campos de Data                                                                                                                                                                                                                                                                                                
+                    // Classes que identificam campos de Data                                                                                                                                                                                                                                                                                                   
                     case 'type-datetime-local':
                     case 'type-datetime':
                     case 'type-date':
@@ -354,7 +354,7 @@ var Forms = new (function () {
 
             // Conforme o tipo do input
             switch (o.type) {
-                // Para inputs de data...                                                                                                                                                                                                                                                                                                                                                                      
+                // Para inputs de data...                                                                                                                                                                                                                                                                                                                                                                         
                 case 'datetime-local':
                 case 'datetime':
                 case 'date':
@@ -383,7 +383,7 @@ var Forms = new (function () {
 
                     break;
 
-                // Para inputs numéricos                                                                                                                                                                                                                                                                                                                                                                 
+                // Para inputs numéricos                                                                                                                                                                                                                                                                                                                                                                    
                 case 'number':
                 case 'range':
                     if (val.IsNumber()) {
@@ -1641,7 +1641,7 @@ var Forms = new (function () {
                 var evt_Private_FieldFormatOnBlur = function (o) {
                     o = Forms.FieldElement(o.target);
                     if (o.format) {
-                        o.self.value = o.def.Format(o.value, undefined, o.decimal);
+                        o.self.value = o.def.Format(o.value, o.decimal);
                     }
                 };
 
