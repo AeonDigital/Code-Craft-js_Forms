@@ -157,7 +157,7 @@ var Forms = new (function () {
             for (var it in o.class) {
                 var cl = o.class[it].toLowerCase();
                 switch (cl) {
-                    // Classes que identificam campos de Data                                                                                                                                                                                                                                                                                                   
+                    // Classes que identificam campos de Data                                                                                                                                                                                                                                                                                                    
                     case 'type-datetime-local':
                     case 'type-datetime':
                     case 'type-date':
@@ -354,7 +354,7 @@ var Forms = new (function () {
 
             // Conforme o tipo do input
             switch (o.type) {
-                // Para inputs de data...                                                                                                                                                                                                                                                                                                                                                                         
+                // Para inputs de data...                                                                                                                                                                                                                                                                                                                                                                          
                 case 'datetime-local':
                 case 'datetime':
                 case 'date':
@@ -383,7 +383,7 @@ var Forms = new (function () {
 
                     break;
 
-                // Para inputs numéricos                                                                                                                                                                                                                                                                                                                                                                    
+                // Para inputs numéricos                                                                                                                                                                                                                                                                                                                                                                     
                 case 'number':
                 case 'range':
                     if (val.IsNumber()) {
@@ -552,7 +552,7 @@ var Forms = new (function () {
                     // não sendo um campo "range"
                     if (info.def != null && info.format && info.type != 'range') {
                         if (info.type == 'number') {
-                            info.self.value = info.def.Format(info.self.value, undefined, info.decimal);
+                            info.self.value = info.def.Format(info.self.value, info.decimal);
                         }
                         else {
                             info.self.value = info.def.Format(info.self.value);
@@ -648,7 +648,7 @@ var Forms = new (function () {
             if (fields != null && fields.length > 0) {
 
                 // Evento que será adicionado nos campos encontrados
-                var evt_Private_OnEnter = function (e) { if (e.keyCode == 13) { ev(); } };
+                var evt_Private_OnEnter = function (e) { if (e.keyCode == 13) { ev(e); } };
 
                 // Para cada campo Input
                 for (var it in fields) {
@@ -661,7 +661,7 @@ var Forms = new (function () {
                             case 'datetime-local': case 'datetime': case 'date':
                             case 'month': case 'week': case 'time': case 'number':
                             case 'range': case 'email': case 'color': case 'tel':
-                            case 'url': case 'text': case 'password':
+                            case 'url': case 'text': case 'password': case 'search':
 
                                 fld.addEventListener('keyup', evt_Private_OnEnter, false);
 
