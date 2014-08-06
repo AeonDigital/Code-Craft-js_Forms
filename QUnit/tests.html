@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Forms QUnit Tests</title>
+        <link rel="stylesheet" href="resources/qunit.css" />
+        
+        
+        <script src="resources/qunit.js"></script>
+        <script src="https://raw.githubusercontent.com/AeonDigital/Code-Craft-js_BasicTools/master/BasicTools.js"></script>
+        <script src="https://raw.githubusercontent.com/AeonDigital/Code-Craft-js_BasicDOM/master/BasicDOM.js"></script>
+        <script src="https://raw.githubusercontent.com/AeonDigital/Code-Craft-js_StringExtension/master/StringExtension.js"></script>
+        <script src="https://raw.githubusercontent.com/AeonDigital/Code-Craft-js_ComplexType/master/ComplexType.js"></script>
+        <script src="../Forms.js"></script>
+        
+    </head>
+    <body>
+        <div id="qunit"></div>
+        <div id="qunit-fixture"></div>
+
+
+        <form action="index.html" method="post" novalidate="novalidate" style="display: none;">
+            <div>
+                <label for="ViewForm_FullName">Nome</label>
+                <input type="text" id="ViewForm_FullName" name="ViewForm_FullName" class="iCommom small-fix"
+                        data-complextype="ViewForm.FullName"
+                        title="Nome" />
+            </div>
+
+            <div>
+                <label for="ViewForm_Email">Email</label>
+                <input type="text" id="ViewForm_Email" name="ViewForm_Email" class="iCommom"
+                        data-complextype="ViewForm.Email"
+                        title="Email" />
+            </div>
+
+            <div>
+                <label for="ViewForm_Mensagem">Mensagem</label>
+                <input type="text" id="ViewForm_Mensagem" name="ViewForm_Mensagem" class="iCommom"
+                        data-complextype="ViewForm.Mensagem"
+                        title="Mensagem" />
+            </div>
+        </form>
+
+        <script>
+            // <![CDATA[
+
+            module('DataBase');
+            var _f = CodeCraft.Forms;
+
+
+            _f.AddNewCollection('ViewForm', [
+                _f.CreateFormType('FullName', 'String', 64, null, null, null, false, null, null),
+                _f.CreateFormType('Email', 'String', null, null, null, null, false, null, String.Pattern.World.Email),
+                _f.CreateFormType('Mensagem', 'String', null, null, null, null, false, null, null)
+            ]);
+
+            _f.ConnectFields();
+
+
+
+
+            test('CheckAndFormatField', function () {
+                equal(3, 3, '');
+            });
+
+
+
+
+            test('CheckFields', function () {
+                equal(3, 3, '');
+            });
+
+
+            // ]]>
+        </script>
+    </body>
+</html>
