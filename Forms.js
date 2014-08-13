@@ -61,26 +61,26 @@ CodeCraft.Forms = new (function () {
 
 
     <form action="index.html" method="post" novalidate="novalidate">
-        <div>
-            <label for="ViewForm_FullName">Nome</label>
-            <input type="text" id="ViewForm_FullName" name="ViewForm_FullName" class="iCommom small-fix"
-                data-complextype="ViewForm.FullName"
-                title="Nome" />
-        </div>
+    <div>
+    <label for="ViewForm_FullName">Nome</label>
+    <input type="text" id="ViewForm_FullName" name="ViewForm_FullName" class="iCommom small-fix"
+    data-complextype="ViewForm.FullName"
+    title="Nome" />
+    </div>
 
-        <div>
-            <label for="ViewForm_Email">Email</label>
-            <input type="text" id="ViewForm_Email" name="ViewForm_Email" class="iCommom"
-                data-complextype="ViewForm.Email"
-                title="Email" />
-        </div>
+    <div>
+    <label for="ViewForm_Email">Email</label>
+    <input type="text" id="ViewForm_Email" name="ViewForm_Email" class="iCommom"
+    data-complextype="ViewForm.Email"
+    title="Email" />
+    </div>
 
-        <div>
-            <label for="ViewForm_Mensagem">Mensagem</label>
-            <input type="text" id="ViewForm_Mensagem" name="ViewForm_Mensagem" class="iCommom"
-                data-complextype="ViewForm.Mensagem"
-                title="Mensagem" />
-        </div>
+    <div>
+    <label for="ViewForm_Mensagem">Mensagem</label>
+    <input type="text" id="ViewForm_Mensagem" name="ViewForm_Mensagem" class="iCommom"
+    data-complextype="ViewForm.Mensagem"
+    title="Mensagem" />
+    </div>
     </form>
 
 
@@ -91,9 +91,9 @@ CodeCraft.Forms = new (function () {
 
 
     CodeCraft.Forms.AddNewCollection('ViewForm', [
-        CodeCraft.Forms.CreateFormType('FullName', 'String', 64, null, null, null, false, null, null),
-        CodeCraft.Forms.CreateFormType('Email', 'String', null, null, null, null, false, null, String.Pattern.World.Email),
-        CodeCraft.Forms.CreateFormType('Mensagem', 'String', null, null, null, null, false, null, null)
+    CodeCraft.Forms.CreateFormType('FullName', 'String', 64, null, null, null, false, null, null),
+    CodeCraft.Forms.CreateFormType('Email', 'String', null, null, null, null, false, null, String.Pattern.World.Email),
+    CodeCraft.Forms.CreateFormType('Mensagem', 'String', null, null, null, null, false, null, null)
     ]);
 
     
@@ -550,14 +550,9 @@ CodeCraft.Forms = new (function () {
 
                             // Adiciona verificador/formatador
                             var fc = CodeCraft.Forms;
-                            if (ft.IsField || ft.IsTextArea) {
-                                f.removeEventListener('keyup', fc.CheckAndFormatField, false);
-                                f.addEventListener('keyup', fc.CheckAndFormatField, false);
-                            }
-                            else {
-                                f.removeEventListener('change', fc.CheckAndFormatField, false);
-                                f.addEventListener('change', fc.CheckAndFormatField, false);
-                            }
+                            var ev = (ft.IsField || ft.IsTextArea) ? 'keyup' : 'change';
+
+                            _dom.SetEvent(f, ev, fc.CheckAndFormatField);
                             fc.CheckAndFormatField({ target: f, check: false });
                         }
                     }
@@ -655,7 +650,7 @@ CodeCraft.Forms = new (function () {
                                     }
                                     else {
                                         switch (cType.Type.Name) {
-                                            // Verificação para String                                       
+                                            // Verificação para String                                        
                                             case 'String':
                                                 // Havendo um formatador, executa-o
                                                 val = (ss != null && ss.Format != null) ? ss.Format(val) : val;
@@ -668,7 +663,7 @@ CodeCraft.Forms = new (function () {
 
                                                 break;
 
-                                            // Verificação para Numerais e Date                                      
+                                            // Verificação para Numerais e Date                                       
                                             case 'Date':
                                             case 'Byte':
                                             case 'Short':
