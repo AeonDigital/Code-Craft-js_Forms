@@ -5,10 +5,13 @@
 * @module Forms
 * @file Forms.
 *
+* @requires BasicTools
+* @requires BasicDOM
+* @requires ComplexType
+* @requires StringExtension [optional]
+*
 * @author Rianna Cantarelli <rianna.aeon@gmail.com>
 */
-
-
 
 
 
@@ -18,7 +21,6 @@
 // Caso não exista, inicia objeto CodeCraft
 var CodeCraft = (CodeCraft || function () { });
 if(typeof(CodeCraft) === 'function') { CodeCraft = new CodeCraft(); };
-
 
 
 
