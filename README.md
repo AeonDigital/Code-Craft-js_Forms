@@ -28,6 +28,8 @@ facilitando seu preenchimento, validação e formatação.
 * `ConnectFields`               : Conecta os campos marcados com seus respectivos objetos "ComplexType".
 * `CheckAndFormatField`         : Efetua verificação do campo a partir do seu respectivo "ComplexType".
 * `CheckFields`                 : Valida todos os campos encontrados para o formulário alvo.
+* `SetActionOnEnter`            : Prepara os campos para dispararem uma ação não padrão ao pressionar Enter.
+
 
 
 #### Dependências

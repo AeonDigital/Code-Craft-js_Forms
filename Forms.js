@@ -650,7 +650,7 @@ CodeCraft.Forms = new (function () {
                                     }
                                     else {
                                         switch (cType.Type.Name) {
-                                            // Verificação para String                                        
+                                            // Verificação para String                                              
                                             case 'String':
                                                 // Havendo um formatador, executa-o
                                                 val = (ss != null && ss.Format != null) ? ss.Format(val) : val;
@@ -663,7 +663,7 @@ CodeCraft.Forms = new (function () {
 
                                                 break;
 
-                                            // Verificação para Numerais e Date                                       
+                                            // Verificação para Numerais e Date                                             
                                             case 'Date':
                                             case 'Byte':
                                             case 'Short':
@@ -747,6 +747,42 @@ CodeCraft.Forms = new (function () {
 
 
             return (errors.length === 0) ? true : errors;
+        },
+
+
+
+
+
+        /**
+        * Prepara todos os campos <input> do formulário alvo para dispararem o evendo indicado
+        * ao pressionar o botão "Enter".
+        * 
+        * @function SetActionOnEnter
+        *
+        * @memberof Forms
+        *
+        * @param {Node}                     f                               Elemento "form" alvo.
+        * @param {Function}                 ev                              Evento que será disparado.
+        */
+        SetActionOnEnter: function (f, ev) {
+            // Evento que será adicionado nos campos encontrados
+            var __event_OnEnter = function (e) { if (e.keyCode == 13) { ev(e); } };
+
+
+            var flds = _dom.Get('input', f);
+            for (var it in flds) {
+                var t = flds[it].type;
+
+                switch (t) {
+                    case 'datetime-local': case 'datetime': case 'date':
+                    case 'month': case 'week': case 'time': case 'number':
+                    case 'range': case 'email': case 'color': case 'tel':
+                    case 'url': case 'text': case 'password': case 'search':
+
+                        _dom.SetEvent(flds[it], 'keyup', __event_OnEnter);
+                        break;
+                }
+            }
         }
     };
 
