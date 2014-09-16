@@ -12,7 +12,7 @@
 *
 * @author Rianna Cantarelli <rianna.aeon@gmail.com>
 */
-
+'use strict';
 
 
 
@@ -329,7 +329,7 @@ CodeCraft.Forms = new (function () {
     /**
     * OBJETO PÚBLICO QUE SERÁ EXPOSTO.
     */
-    var public = this.Control = {
+    var _public = this.Control = {
         /**
         * Legendas para mensagens de erro amigáveis.
         *
@@ -787,5 +787,5 @@ CodeCraft.Forms = new (function () {
     };
 
 
-    return public;
+    return _public;
 });
