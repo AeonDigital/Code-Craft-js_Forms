@@ -61,26 +61,26 @@ CodeCraft.Forms = new (function () {
 
 
     <form action="index.html" method="post" novalidate="novalidate">
-    <div>
-    <label for="ViewForm_FullName">Nome</label>
-    <input type="text" id="ViewForm_FullName" name="ViewForm_FullName" class="iCommom small-fix"
-    data-ccw-complextype="ViewForm.FullName"
-    title="Nome" />
-    </div>
+        <div>
+            <label for="ViewForm_FullName">Nome</label>
+            <input type="text" id="ViewForm_FullName" name="ViewForm_FullName" class="iCommom small-fix"
+                data-ccw-complextype="ViewForm.FullName"
+                title="Nome" />
+        </div>
 
-    <div>
-    <label for="ViewForm_Email">Email</label>
-    <input type="text" id="ViewForm_Email" name="ViewForm_Email" class="iCommom"
-    data-ccw-complextype="ViewForm.Email"
-    title="Email" />
-    </div>
+        <div>
+            <label for="ViewForm_Email">Email</label>
+            <input type="text" id="ViewForm_Email" name="ViewForm_Email" class="iCommom"
+                data-ccw-complextype="ViewForm.Email"
+                title="Email" />
+        </div>
 
-    <div>
-    <label for="ViewForm_Mensagem">Mensagem</label>
-    <input type="text" id="ViewForm_Mensagem" name="ViewForm_Mensagem" class="iCommom"
-    data-ccw-complextype="ViewForm.Mensagem"
-    title="Mensagem" />
-    </div>
+        <div>
+            <label for="ViewForm_Mensagem">Mensagem</label>
+            <input type="text" id="ViewForm_Mensagem" name="ViewForm_Mensagem" class="iCommom"
+                data-ccw-complextype="ViewForm.Mensagem"
+                title="Mensagem" />
+        </div>
     </form>
 
 
