@@ -55,30 +55,30 @@ CodeCraft.Forms = new (function () {
     1 - HTML
 
     Atributos especiais
-    data-cc-complextype        :       Indica qual objeto "ComplexType" controla a validação e formatação do campo.
-    data-cc-valid              :       Indica se o campo é válido [true] ou não [false]
-    data-cc-validate           :       Indica se é para validar o campo ou não [true|false]
+    data-ccw-complextype        :       Indica qual objeto "ComplexType" controla a validação e formatação do campo.
+    data-ccw-valid              :       Indica se o campo é válido [true] ou não [false]
+    data-ccw-validate           :       Indica se é para validar o campo ou não [true|false]
 
 
     <form action="index.html" method="post" novalidate="novalidate">
     <div>
     <label for="ViewForm_FullName">Nome</label>
     <input type="text" id="ViewForm_FullName" name="ViewForm_FullName" class="iCommom small-fix"
-    data-cc-complextype="ViewForm.FullName"
+    data-ccw-complextype="ViewForm.FullName"
     title="Nome" />
     </div>
 
     <div>
     <label for="ViewForm_Email">Email</label>
     <input type="text" id="ViewForm_Email" name="ViewForm_Email" class="iCommom"
-    data-cc-complextype="ViewForm.Email"
+    data-ccw-complextype="ViewForm.Email"
     title="Email" />
     </div>
 
     <div>
     <label for="ViewForm_Mensagem">Mensagem</label>
     <input type="text" id="ViewForm_Mensagem" name="ViewForm_Mensagem" class="iCommom"
-    data-cc-complextype="ViewForm.Mensagem"
+    data-ccw-complextype="ViewForm.Mensagem"
     title="Mensagem" />
     </div>
     </form>
@@ -191,7 +191,7 @@ CodeCraft.Forms = new (function () {
     */
     var ValidateError = {
         /** 
-        * Valor do atributo "data-cc-complextype" é inválido. 
+        * Valor do atributo "data-ccw-complextype" é inválido. 
         *
         * @memberof ValidateError
         */
@@ -349,17 +349,17 @@ CodeCraft.Forms = new (function () {
             */
             FormErrorTitleAlert: 'The following errors were found:',
             /** 
-            * Valor do atributo "data-cc-complextype" é inválido. 
+            * Valor do atributo "data-ccw-complextype" é inválido. 
             *
             * @memberof ValidateErrorLabels
             */
-            InvalidComplexType: 'The value "{label}" of attribute "data-cc-complextype" is invalid.',
+            InvalidComplexType: 'The value "{label}" of attribute "data-ccw-complextype" is invalid.',
             /**
             * ComplexType definido não existe.
             *
             * @memberof ValidateErrorLabels
             */
-            ComplexTypeDoesNotExist: 'Table or column does not exist.\n[data-cc-complextype="{label}"]',
+            ComplexTypeDoesNotExist: 'Table or column does not exist.\n[data-ccw-complextype="{label}"]',
             /**
             * Valor obrigatorio não foi informado.
             *
@@ -488,14 +488,14 @@ CodeCraft.Forms = new (function () {
             for (var it in tgtInputs) {
                 var f = tgtInputs[it];
 
-                if (isOk && f.hasAttribute('data-cc-complextype')) {
-                    var dbfn = f.getAttribute('data-cc-complextype');
+                if (isOk && f.hasAttribute('data-ccw-complextype')) {
+                    var dbfn = f.getAttribute('data-ccw-complextype');
                     var cType = null;
 
                     // Nome da Tabela e Coluna que o campo deve representar
                     var fn = dbfn.split('.');
                     if (fn.length != 2) {
-                        console.log('Input has an invalid value for attribute "data-cc-complextype". Found "' + dbfn + '".');
+                        console.log('Input has an invalid value for attribute "data-ccw-complextype". Found "' + dbfn + '".');
                         isOk = false;
                     }
                     else {
@@ -583,17 +583,17 @@ CodeCraft.Forms = new (function () {
             var c = (o.check !== undefined) ? o.check : true;
             var r = (r === undefined) ? true : r;
             var o = o.target;
-            var validate = (o.hasAttribute('data-cc-validate')) ? _bt.TryParse.ToBoolean(!o.getAttribute('data-cc-validate')) : true;
+            var validate = (o.hasAttribute('data-ccw-validate')) ? _bt.TryParse.ToBoolean(!o.getAttribute('data-ccw-validate')) : true;
             var isValid = false;
 
 
             // Se o campo não deve ser validado, ou, se não possui marcação que 
             // possibilite enquadra-lo em alguma regra de validação... ignora-o
-            if (!validate || !o.hasAttribute('data-cc-complextype')) {
+            if (!validate || !o.hasAttribute('data-ccw-complextype')) {
                 isValid = true;
             }
             else {
-                var dbfn = o.getAttribute('data-cc-complextype');
+                var dbfn = o.getAttribute('data-ccw-complextype');
                 var cType = null;
 
 
@@ -690,7 +690,7 @@ CodeCraft.Forms = new (function () {
 
 
                         if (c) {
-                            o.setAttribute('data-cc-valid', ((isValid === true) ? true : false));
+                            o.setAttribute('data-ccw-valid', ((isValid === true) ? true : false));
                             isValid = true;
                         }
                     }
@@ -723,7 +723,7 @@ CodeCraft.Forms = new (function () {
         CheckFields: function (f, labels) {
             var errors = [];
             var fc = CodeCraft.Forms;
-            var tgtInputs = _dom.Get('[data-cc-complextype]', f);
+            var tgtInputs = _dom.Get('[data-ccw-complextype]', f);
             labels = (labels === undefined) ? fc.ValidateErrorLabels : labels;
 
 
@@ -735,7 +735,7 @@ CodeCraft.Forms = new (function () {
 
                     var msg = labels[r];
                     var lbl = (r == 'InvalidComplexType' ||
-                                r == 'ComplexTypeDoesNotExist') ? f.getAttribute('data-cc-complextype') : _getFieldName(f);
+                                r == 'ComplexTypeDoesNotExist') ? f.getAttribute('data-ccw-complextype') : _getFieldName(f);
 
                     errors.push({
                         Field: f,
