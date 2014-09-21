@@ -53,33 +53,64 @@ CodeCraft.Forms = new (function () {
 
 
     1 - HTML
+    
 
     Atributos especiais
-    data-ccw-complextype        :       Indica qual objeto "ComplexType" controla a validação e formatação do campo.
-    data-ccw-valid              :       Indica se o campo é válido [true] ou não [false]
-    data-ccw-validate           :       Indica se é para validar o campo ou não [true|false]
+    data-ccw-fcon-object           :        Este atributo tem como objetivo indicar qual objeto "ComplexType" controla
+                                            a validação e formatação do campo alem de informar.
+                                            Também informa qual "Id" dos respectivos objetos está sendo apresentado.
+                                            Ex : 
+                                            Suponha as seguintes tabelas e propriedades
+
+                                            Tabelas : 
+                                                Client = {
+                                                    Id : null,
+                                                    Name : 'String',
+                                                    Phone : 'Telephone[]'
+                                                };
+                                                Telephone = {
+                                                    Id : null,
+                                                    Number : 'String'
+                                                };
+
+                                            Um campo com o atributo [data-ccw-fcon-object="Client[0].Name"]
+                                            irá fazer uma conexão com a propriedade "Name" da tabela "Client".
+                                            A indicação [0] define que o objeto é novo.
+
+                                            Fosse usado o atributo [data-ccw-fcon-object="Client[25].Name"]
+                                            indica que o campo deve mostrar o valor atual da propriedade "Name" da tabela "Client"
+                                            para o respectivo registro de Id 25.
+
+                                            Já um valor como [data-ccw-fcon-object="Client[15].Phone[3].Number"]
+                                            deverá demonstrar o valor do campo "Number" da tabela "Telephone" para o registro de
+                                            Id 3. A notação indica também que o objeto "Telephone" está contido como um dos
+                                            elementos da propriedade "Phone" da tabela "Client" do registro de id 15.
+
+
+    data-ccw-fcon-valid            :        Indica se o campo é válido [true] ou não [false]
+    data-ccw-fcon-validate         :        Indica se é para validar o campo ou não [true|false]
 
 
     <form action="index.html" method="post" novalidate="novalidate">
         <div>
-            <label for="ViewForm_FullName">Nome</label>
-            <input type="text" id="ViewForm_FullName" name="ViewForm_FullName" class="iCommom small-fix"
-                data-ccw-complextype="ViewForm.FullName"
-                title="Nome" />
+            <label for="ViewForm_0_FullName">Nome</label>
+            <input type="text" id="ViewForm_0_FullName" name="ViewForm_0_FullName" class="iCommom small-fix"
+                    data-ccw-fcon-object="ViewForm[0].FullName"
+                    title="Nome" />
         </div>
 
         <div>
-            <label for="ViewForm_Email">Email</label>
-            <input type="text" id="ViewForm_Email" name="ViewForm_Email" class="iCommom"
-                data-ccw-complextype="ViewForm.Email"
-                title="Email" />
+            <label for="ViewForm_0_Email">Email</label>
+            <input type="text" id="ViewForm_0_Email" name="ViewForm_0_Email" class="iCommom"
+                    data-ccw-fcon-object="ViewForm[0].Email"
+                    title="Email" />
         </div>
 
         <div>
-            <label for="ViewForm_Mensagem">Mensagem</label>
-            <input type="text" id="ViewForm_Mensagem" name="ViewForm_Mensagem" class="iCommom"
-                data-ccw-complextype="ViewForm.Mensagem"
-                title="Mensagem" />
+            <label for="ViewForm_0_Mensagem_1_Conteudo">Mensagem</label>
+            <input type="text" id="ViewForm_0_Mensagem_1_Conteudo" name="ViewForm_0_Mensagem_1_Conteudo" class="iCommom"
+                    data-ccw-fcon-object="ViewForm[0].Mensagem[1].Conteudo"
+                    title="Mensagem" />
         </div>
     </form>
 
@@ -91,9 +122,9 @@ CodeCraft.Forms = new (function () {
 
 
     CodeCraft.Forms.AddNewCollection('ViewForm', [
-    CodeCraft.Forms.CreateFormType('FullName', 'String', 64, null, null, null, false, null, null),
-    CodeCraft.Forms.CreateFormType('Email', 'String', null, null, null, null, false, null, String.Pattern.World.Email),
-    CodeCraft.Forms.CreateFormType('Mensagem', 'String', null, null, null, null, false, null, null)
+        CodeCraft.Forms.CreateFormType('FullName', 'String', 64, null, null, null, false, null, null),
+        CodeCraft.Forms.CreateFormType('Email', 'String', null, null, null, null, false, null, String.Pattern.World.Email),
+        CodeCraft.Forms.CreateFormType('Mensagem', 'String', null, null, null, null, false, null, null)
     ]);
 
     
@@ -139,6 +170,8 @@ CodeCraft.Forms = new (function () {
 
 
 
+
+
     /*
     * PROPRIEDADES PRIVADAS
     */
@@ -156,28 +189,6 @@ CodeCraft.Forms = new (function () {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /*
-    * MÉTODOS PRIVADOS
-    */
-
-
-
     /**
     * Tipos de erros para a validação de campos de formulários.
     *
@@ -191,7 +202,7 @@ CodeCraft.Forms = new (function () {
     */
     var ValidateError = {
         /** 
-        * Valor do atributo "data-ccw-complextype" é inválido. 
+        * Valor do atributo "data-ccw-fcon-object" é inválido. 
         *
         * @memberof ValidateError
         */
@@ -249,33 +260,118 @@ CodeCraft.Forms = new (function () {
 
 
 
-    /**
-    * Retorna o objeto "ComplexType" selecionado.
-    *
-    * @function _selectComplexType
-    *
-    * @param {String}                       collection                      Nome da coleção.
-    * @param {String}                       ctName                          Nome do tipo que será selecionado.
-    *
-    * @return {!ComplexType}
+
+
+
+
+
+
+
+
+
+
+
+    /*
+    * MÉTODOS PRIVADOS
     */
-    var _selectComplexType = function (collection, ctName) {
-        var r = null;
 
-        for (var it in _complexTypes) {
-            if (it == collection) {
-                var ct = _complexTypes[it];
 
-                for (var n in ct) {
-                    if (ct[n].Name == ctName) { r = ct[n]; break; }
-                }
 
-                break;
+    /**
+    * Conjunto de métodos para trabalhar com a notação usada para o atributo "data-ccw-fcon-object"
+    */
+    var _notTools = {
+        /**
+        * Trata a menor porção de uma notação, retornando um objeto do tipo
+        * { Name : 'String', Id : Integer }
+        *
+        * @function _unMake
+        *
+        * @param {String}               not                 Notação.
+        *
+        * @return {Object}
+        */
+        _unMake: function (not) {
+            var r = {
+                Id: 0,
+                Name: not
+            };
+
+            not = not.split('[');
+            if (not.length == 2) {
+                r.Id = parseInt(not[1].replace(']', ''), 10);
+                r.Name = not[0];
             }
-        }
 
-        return r;
+            return r;
+        },
+        /**
+        * Retorna o objeto "ComplexType" a partir do valor de um atributo "data-ccw-fcon-object".
+        *
+        * @function _getComplexTypeByNotation
+        *
+        * @param {String}                   not                         Notação usada para a conexão do campo ao atributo alvo.
+        *
+        * @return {!ComplexType}
+        */
+        _getComplexTypeByNotation: function (not) {
+            var r = null;
+            var _nt = _notTools;
+
+            // Apenas se houverem, ao menos 2 partes identificadas...
+            not = not.split('.');
+            if (not.length >= 2) {
+                var c = _nt._unMake(not[0]).Name;
+                var n = _nt._unMake(not[1]).Name;
+                r = _nt._getComplexType(c, n);
+
+                // Havendo mais que 2 partes...
+                if (not.length > 2) {
+                    for (var i = 2; i < not.length; i++) {
+                        c = r.RefType;
+                        n = _nt._unMake(not[i]).Name;
+                        r = _nt._getComplexType(c, n);
+                    }
+                }
+            }
+
+            return r;
+        },
+        /**
+        * Retorna o objeto "ComplexType" indicado.
+        *
+        * @function _getComplexType
+        *
+        * @param {String}                       collection                      Nome da coleção.
+        * @param {String}                       ctName                          Nome do tipo que será selecionado.
+        *
+        * @return {!ComplexType}
+        */
+        _getComplexType: function (collection, ctName) {
+            var r = null;
+
+            for (var it in _complexTypes) {
+                if (it == collection) {
+                    var ct = _complexTypes[it];
+
+                    for (var n in ct) {
+                        if (ct[n].Name == ctName) { r = ct[n]; break; }
+                    }
+
+                    break;
+                }
+            }
+
+            return r;
+        }
     };
+
+
+
+
+
+
+
 
 
 
@@ -326,6 +422,8 @@ CodeCraft.Forms = new (function () {
 
 
 
+
+
     /**
     * OBJETO PÚBLICO QUE SERÁ EXPOSTO.
     */
@@ -349,17 +447,17 @@ CodeCraft.Forms = new (function () {
             */
             FormErrorTitleAlert: 'The following errors were found:',
             /** 
-            * Valor do atributo "data-ccw-complextype" é inválido. 
+            * Valor do atributo "data-ccw-fcon-object" é inválido. 
             *
             * @memberof ValidateErrorLabels
             */
-            InvalidComplexType: 'The value "{label}" of attribute "data-ccw-complextype" is invalid.',
+            InvalidComplexType: 'The value "{label}" of attribute "data-ccw-fcon-object" is invalid.',
             /**
             * ComplexType definido não existe.
             *
             * @memberof ValidateErrorLabels
             */
-            ComplexTypeDoesNotExist: 'Table or column does not exist.\n[data-ccw-complextype="{label}"]',
+            ComplexTypeDoesNotExist: 'Table or column does not exist.\n[data-ccw-fcon-object="{label}"]',
             /**
             * Valor obrigatorio não foi informado.
             *
@@ -481,34 +579,20 @@ CodeCraft.Forms = new (function () {
         */
         ConnectFields: function () {
             var tgtInputs = _dom.Get('input, textarea, select');
-            var isOk = true;
             var d = true;
 
 
             for (var it in tgtInputs) {
                 var f = tgtInputs[it];
 
-                if (isOk && f.hasAttribute('data-ccw-complextype')) {
-                    var dbfn = f.getAttribute('data-ccw-complextype');
-                    var cType = null;
+                if (f.hasAttribute('data-ccw-fcon-object')) {
+                    var cType = _notTools._getComplexTypeByNotation(f.getAttribute('data-ccw-fcon-object'));
 
-                    // Nome da Tabela e Coluna que o campo deve representar
-                    var fn = dbfn.split('.');
-                    if (fn.length != 2) {
-                        console.log('Input has an invalid value for attribute "data-ccw-complextype". Found "' + dbfn + '".');
-                        isOk = false;
+
+                    if(cType == null) {
+                        console.log('Input has an invalid value for attribute "data-ccw-fcon-object". Found "' + f.getAttribute('data-ccw-fcon-object') + '".');
                     }
                     else {
-                        cType = _selectComplexType(fn[0], fn[1]);
-                        if (cType != null) {
-                            isOk = true;
-                        }
-                    }
-
-
-
-                    // Não encontrando erros ...
-                    if (isOk) {
                         var ft = _bt.GetFieldType(f);
 
 
@@ -583,116 +667,103 @@ CodeCraft.Forms = new (function () {
             var c = (o.check !== undefined) ? o.check : true;
             var r = (r === undefined) ? true : r;
             var o = o.target;
-            var validate = (o.hasAttribute('data-ccw-validate')) ? _bt.TryParse.ToBoolean(!o.getAttribute('data-ccw-validate')) : true;
+            var validate = (o.hasAttribute('data-ccw-fcon-validate')) ? _bt.TryParse.ToBoolean(!o.getAttribute('data-ccw-fcon-validate')) : true;
             var isValid = false;
 
 
             // Se o campo não deve ser validado, ou, se não possui marcação que 
             // possibilite enquadra-lo em alguma regra de validação... ignora-o
-            if (!validate || !o.hasAttribute('data-ccw-complextype')) {
+            if (!validate || !o.hasAttribute('data-ccw-fcon-object')) {
                 isValid = true;
             }
             else {
-                var dbfn = o.getAttribute('data-ccw-complextype');
-                var cType = null;
-
-
-                // Nome da Tabela e Coluna que o campo deve representar
-                var fn = dbfn.split('.');
-
-                if (fn.length != 2) {
-                    isValid = (r === true) ? false : ValidateError.InvalidComplexType;
+                var cType = _notTools._getComplexTypeByNotation(o.getAttribute('data-ccw-fcon-object'));
+                if (cType == null) {
+                    isValid = (r === true) ? false : ValidateError.ComplexTypeDoesNotExist;
                 }
                 else {
-                    cType = _selectComplexType(fn[0], fn[1]);
+                    var ft = _bt.GetFieldType(o);
+                    var val = o.value;
+                    var req = (_bt.IsNotNullValue(o.required)) ? _bt.TryParse.ToBoolean(o.required) : false;
 
-                    if (cType == null) {
-                        isValid = (r === true) ? false : ValidateError.ComplexTypeDoesNotExist;
+
+                    // Verifica valores obrigatórios
+                    if (req && o.value == '') {
+                        var err = (ft.IsSelect) ? ValidateError.ValueNotSelected : ValidateError.RequiredValueNotSet;
+                        isValid = (r === true) ? false : err;
                     }
                     else {
-                        var ft = _bt.GetFieldType(o);
-                        var val = o.value;
-                        var req = (_bt.IsNotNullValue(o.required)) ? _bt.TryParse.ToBoolean(o.required) : false;
 
-
-                        // Verifica valores obrigatórios
-                        if (req && o.value == '') {
-                            var err = (ft.IsSelect) ? ValidateError.ValueNotSelected : ValidateError.RequiredValueNotSet;
-                            isValid = (r === true) ? false : err;
-                        }
-                        else {
-
-                            // Campos select não passam pelas validações a seguir.
-                            if (ft.IsSelect) {
-                                isValid = true;
-                            }
-                            else {
-                                var ss = (_bt.IsNotNullValue(cType.FormatSet)) ? cType.FormatSet : null;
-
-                                // Verifica se a string é válida dentro das especificações do SuperType
-                                isValid = (ss != null && _bt.IsNotNullValue(ss.Check)) ? ss.Check(val) : true;
-
-                                if (!isValid) {
-                                    isValid = (r === true) ? false : ValidateError.InvalidValue;
-                                }
-                                else {
-                                    // Força para que o valor retorne ao seu tipo original
-                                    val = (ss != null && ss.RemoveFormat != null) ? ss.RemoveFormat(val) : val;
-                                    val = cType.Type.TryParse(val, cType.RefType);
-
-
-                                    // Valida o valor conforme o tipo de dado da coluna,
-                                    // ENUNs são testados aqui
-                                    isValid = cType.Type.Validate(val, cType.RefType);
-
-                                    if (!isValid) {
-                                        isValid = (r === true) ? false : ValidateError.InvalidType;
-                                    }
-                                    else {
-                                        switch (cType.Type.Name) {
-                                            // Verificação para String                                              
-                                            case 'String':
-                                                // Havendo um formatador, executa-o
-                                                val = (ss != null && ss.Format != null) ? ss.Format(val) : val;
-
-
-                                                // Verifica tamanho.
-                                                if (cType.Length != null && val.length > cType.Length) {
-                                                    isValid = (r === true) ? false : ValidateError.MaxLengthExceeded;
-                                                }
-
-                                                break;
-
-                                            // Verificação para Numerais e Date                                             
-                                            case 'Date':
-                                            case 'Byte':
-                                            case 'Short':
-                                            case 'Integer':
-                                            case 'Long':
-                                            case 'Float':
-                                            case 'Double':
-                                                if (val < cType.Min || val > cType.Max) {
-                                                    isValid = (r === true) ? false : ValidateError.ValueOutOfRange;
-                                                }
-
-                                                break;
-                                        }
-
-
-
-                                        if (isValid && ss != null && ss.Format != null) {
-                                            o.value = ss.Format(val);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-
-                        if (c) {
-                            o.setAttribute('data-ccw-valid', ((isValid === true) ? true : false));
+                        // Campos select não passam pelas validações a seguir.
+                        if (ft.IsSelect) {
                             isValid = true;
                         }
+                        else {
+                            var ss = (_bt.IsNotNullValue(cType.FormatSet)) ? cType.FormatSet : null;
+
+                            // Verifica se a string é válida dentro das especificações do SuperType
+                            isValid = (ss != null && _bt.IsNotNullValue(ss.Check)) ? ss.Check(val) : true;
+
+                            if (!isValid) {
+                                isValid = (r === true) ? false : ValidateError.InvalidValue;
+                            }
+                            else {
+                                // Força para que o valor retorne ao seu tipo original
+                                val = (ss != null && ss.RemoveFormat != null) ? ss.RemoveFormat(val) : val;
+                                val = cType.Type.TryParse(val, cType.RefType);
+
+
+                                // Valida o valor conforme o tipo de dado da coluna,
+                                // ENUNs são testados aqui
+                                isValid = cType.Type.Validate(val, cType.RefType);
+
+                                if (!isValid) {
+                                    isValid = (r === true) ? false : ValidateError.InvalidType;
+                                }
+                                else {
+                                    switch (cType.Type.Name) {
+                                        // Verificação para String                                                                      
+                                        case 'String':
+                                            // Havendo um formatador, executa-o
+                                            val = (ss != null && ss.Format != null) ? ss.Format(val) : val;
+
+
+                                            // Verifica tamanho.
+                                            if (cType.Length != null && val.length > cType.Length) {
+                                                isValid = (r === true) ? false : ValidateError.MaxLengthExceeded;
+                                            }
+
+                                            break;
+
+                                        // Verificação para Numerais e Date                                                                     
+                                        case 'Date':
+                                        case 'Byte':
+                                        case 'Short':
+                                        case 'Integer':
+                                        case 'Long':
+                                        case 'Float':
+                                        case 'Double':
+                                            if (val < cType.Min || val > cType.Max) {
+                                                isValid = (r === true) ? false : ValidateError.ValueOutOfRange;
+                                            }
+
+                                            break;
+                                    }
+
+
+
+                                    if (isValid && ss != null && ss.Format != null) {
+                                        o.value = ss.Format(val);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+                    if (c) {
+                        o.setAttribute('data-ccw-fcon-valid', ((isValid === true) ? true : false));
+                        isValid = true;
                     }
                 }
             }
@@ -723,7 +794,7 @@ CodeCraft.Forms = new (function () {
         CheckFields: function (f, labels) {
             var errors = [];
             var fc = CodeCraft.Forms;
-            var tgtInputs = _dom.Get('[data-ccw-complextype]', f);
+            var tgtInputs = _dom.Get('[data-ccw-fcon-object]', f);
             labels = (labels === undefined) ? fc.ValidateErrorLabels : labels;
 
 
@@ -735,7 +806,7 @@ CodeCraft.Forms = new (function () {
 
                     var msg = labels[r];
                     var lbl = (r == 'InvalidComplexType' ||
-                                r == 'ComplexTypeDoesNotExist') ? f.getAttribute('data-ccw-complextype') : _getFieldName(f);
+                                r == 'ComplexTypeDoesNotExist') ? f.getAttribute('data-ccw-fcon-object') : _getFieldName(f);
 
                     errors.push({
                         Field: f,
