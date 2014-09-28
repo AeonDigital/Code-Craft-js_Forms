@@ -57,34 +57,34 @@ CodeCraft.Forms = new (function () {
 
     Atributos especiais
     data-ccw-fcon-object           :        Este atributo tem como objetivo indicar qual objeto "ComplexType" controla
-                                            a validação e formatação do campo alem de informar.
-                                            Também informa qual "Id" dos respectivos objetos está sendo apresentado.
-                                            Ex : 
-                                            Suponha as seguintes tabelas e propriedades
+    a validação e formatação do campo alem de informar.
+    Também informa qual "Id" dos respectivos objetos está sendo apresentado.
+    Ex : 
+    Suponha as seguintes tabelas e propriedades
 
-                                            Tabelas : 
-                                                Client = {
-                                                    Id : null,
-                                                    Name : 'String',
-                                                    Phone : 'Telephone[]'
-                                                };
-                                                Telephone = {
-                                                    Id : null,
-                                                    Number : 'String'
-                                                };
+    Tabelas : 
+        Client = {
+            Id : null,
+            Name : 'String',
+            Phone : 'Telephone[]'
+        };
+        Telephone = {
+            Id : null,
+            Number : 'String'
+    };
 
-                                            Um campo com o atributo [data-ccw-fcon-object="Client[0].Name"]
-                                            irá fazer uma conexão com a propriedade "Name" da tabela "Client".
-                                            A indicação [0] define que o objeto é novo.
+    Um campo com o atributo [data-ccw-fcon-object="Client[0].Name"]
+    irá fazer uma conexão com a propriedade "Name" da tabela "Client".
+    A indicação [0] define que o objeto é novo.
 
-                                            Fosse usado o atributo [data-ccw-fcon-object="Client[25].Name"]
-                                            indica que o campo deve mostrar o valor atual da propriedade "Name" da tabela "Client"
-                                            para o respectivo registro de Id 25.
+    Fosse usado o atributo [data-ccw-fcon-object="Client[25].Name"]
+    indica que o campo deve mostrar o valor atual da propriedade "Name" da tabela "Client"
+    para o respectivo registro de Id 25.
 
-                                            Já um valor como [data-ccw-fcon-object="Client[15].Phone[3].Number"]
-                                            deverá demonstrar o valor do campo "Number" da tabela "Telephone" para o registro de
-                                            Id 3. A notação indica também que o objeto "Telephone" está contido como um dos
-                                            elementos da propriedade "Phone" da tabela "Client" do registro de id 15.
+    Já um valor como [data-ccw-fcon-object="Client[15].Phone[3].Number"]
+    deverá demonstrar o valor do campo "Number" da tabela "Telephone" para o registro de
+    Id 3. A notação indica também que o objeto "Telephone" está contido como um dos
+    elementos da propriedade "Phone" da tabela "Client" do registro de id 15.
 
 
     data-ccw-fcon-valid            :        Indica se o campo é válido [true] ou não [false]
@@ -93,10 +93,10 @@ CodeCraft.Forms = new (function () {
 
     <form action="index.html" method="post" novalidate="novalidate">
         <div>
-            <label for="ViewForm_0_FullName">Nome</label>
-            <input type="text" id="ViewForm_0_FullName" name="ViewForm_0_FullName" class="iCommom small-fix"
-                    data-ccw-fcon-object="ViewForm[0].FullName"
-                    title="Nome" />
+        <label for="ViewForm_0_FullName">Nome</label>
+        <input type="text" id="ViewForm_0_FullName" name="ViewForm_0_FullName" class="iCommom small-fix"
+                data-ccw-fcon-object="ViewForm[0].FullName"
+                title="Nome" />
         </div>
 
         <div>
@@ -109,8 +109,8 @@ CodeCraft.Forms = new (function () {
         <div>
             <label for="ViewForm_0_Mensagem_1_Conteudo">Mensagem</label>
             <input type="text" id="ViewForm_0_Mensagem_1_Conteudo" name="ViewForm_0_Mensagem_1_Conteudo" class="iCommom"
-                    data-ccw-fcon-object="ViewForm[0].Mensagem[1].Conteudo"
-                    title="Mensagem" />
+                data-ccw-fcon-object="ViewForm[0].Mensagem[1].Conteudo"
+                title="Mensagem" />
         </div>
     </form>
 
@@ -589,14 +589,17 @@ CodeCraft.Forms = new (function () {
                     var cType = _notTools._getComplexTypeByNotation(f.getAttribute('data-ccw-fcon-object'));
 
 
-                    if(cType == null) {
+                    if (cType == null) {
                         console.log('Input has an invalid value for attribute "data-ccw-fcon-object". Found "' + f.getAttribute('data-ccw-fcon-object') + '".');
                     }
                     else {
                         var ft = _bt.GetFieldType(f);
 
-
-                        if (ft.IsField || ft.IsTextArea || ft.IsSelect) {
+                        // Marca todos os checkbox como não validáveis
+                        if (ft.IsCheckBox) {
+                            f.setAttribute('data-ccw-fcon-validate', 'false');
+                        }
+                        else if (ft.IsField || ft.IsTextArea || ft.IsSelect) {
                             if (cType.AllowSet === false) { f.setAttribute('disabled', 'disabled'); }
                             if (cType.AllowNull === false && !f.hasAttribute('required')) { f.setAttribute('required', 'required'); }
 
@@ -637,7 +640,7 @@ CodeCraft.Forms = new (function () {
                             var ev = (ft.IsField || ft.IsTextArea) ? 'keyup' : 'change';
 
                             _dom.SetEvent(f, ev, fc.CheckAndFormatField);
-                            fc.CheckAndFormatField({ target: f, check: false });
+                            fc.CheckAndFormatField(f, false);
                         }
                     }
 
@@ -658,15 +661,17 @@ CodeCraft.Forms = new (function () {
         * @memberof Forms
         *
         * @param {Node}                     o                               Elemento que será validado.
+        * @param {Boolean}                  [c = true]                      Indica se é ou não para usar o atributo [data-ccw-fcon-valid] no elemento.
         * @param {Boolean}                  [r = true]                      Quando "true" irá retornar um valor booleano, senão, 
         *                                                                   retornará o código do erro em caso de falha ou True em caso de sucesso.
         *
         * @return {Boolean|[True|ValidateError]}
         */
-        CheckAndFormatField: function (o, r) {
-            var c = (o.check !== undefined) ? o.check : true;
-            var r = (r === undefined) ? true : r;
-            var o = o.target;
+        CheckAndFormatField: function (o, c, r) {
+            o = (o.target === undefined) ? o : o.target;
+            c = (c === undefined) ? true : c;
+            r = (r === undefined) ? true : r;
+
             var validate = (o.hasAttribute('data-ccw-fcon-validate')) ? _bt.TryParse.ToBoolean(!o.getAttribute('data-ccw-fcon-validate')) : true;
             var isValid = false;
 
@@ -722,7 +727,7 @@ CodeCraft.Forms = new (function () {
                                 }
                                 else {
                                     switch (cType.Type.Name) {
-                                        // Verificação para String                                                                      
+                                        // Verificação para String                                                                           
                                         case 'String':
                                             // Havendo um formatador, executa-o
                                             val = (ss != null && ss.Format != null) ? ss.Format(val) : val;
@@ -735,7 +740,7 @@ CodeCraft.Forms = new (function () {
 
                                             break;
 
-                                        // Verificação para Numerais e Date                                                                     
+                                        // Verificação para Numerais e Date                                                                          
                                         case 'Date':
                                         case 'Byte':
                                         case 'Short':
@@ -763,7 +768,6 @@ CodeCraft.Forms = new (function () {
 
                     if (c) {
                         o.setAttribute('data-ccw-fcon-valid', ((isValid === true) ? true : false));
-                        isValid = true;
                     }
                 }
             }
@@ -785,23 +789,25 @@ CodeCraft.Forms = new (function () {
         *
         * @memberof Forms
         *
-        * @param {Node}                     f                               Elemento "form" que terá seus campos validados.
+        * @param {Node}                     form                            Elemento "form" que terá seus campos validados.
         * @param {JSON}                     [labels]                        Mensagens amigáveis para serem mostradas ao usuário.
         *                                                                   Se não forem definidas usará o objeto "ValidateErrorLabels"
         *
         * @return {True|ValidateFormResult[]}
         */
-        CheckFields: function (f, labels) {
+        CheckFields: function (form, labels) {
             var errors = [];
             var fc = CodeCraft.Forms;
-            var tgtInputs = _dom.Get('[data-ccw-fcon-object]', f);
+            var tgtInputs = _dom.Get('[data-ccw-fcon-object]', form);
             labels = (labels === undefined) ? fc.ValidateErrorLabels : labels;
 
 
             for (var it in tgtInputs) {
-                f = tgtInputs[it];
-                var r = fc.CheckAndFormatField(f, false);
+                var f = tgtInputs[it];
+                var r = fc.CheckAndFormatField(f, true, false);
 
+                console.log(f.id);
+                console.log(r);
                 if (r !== true) {
 
                     var msg = labels[r];
