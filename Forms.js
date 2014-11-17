@@ -26,6 +26,7 @@ if(typeof(CodeCraft) === 'function') { CodeCraft = new CodeCraft(); };
 
 
 
+
 /**
 * Classe que contém melhorias para utilizar em campos de formulários.
 *
@@ -178,12 +179,25 @@ CodeCraft.Forms = new (function () {
 
 
 
+
+
     /**
     * Agrupa todas as coleções de "ComplexType" que podem ser usados nas validações.
     *
-    * @type {Object[Key/ComplexType[]))
+    * @type {Object[Key/ComplexType[]))}
     */
     var _complexTypes = {};
+
+
+
+
+
+    /**
+    * Atalho para "CodeCraft.Widget.Factory".
+    *
+    * @type {Object}
+    */
+    var _factory = null;
 
 
 
@@ -328,6 +342,7 @@ CodeCraft.Forms = new (function () {
                 var n = _nt._unMake(ntt[1]).Name;
                 r = _nt._getComplexType(c, n);
 
+
                 // Havendo mais que 2 partes...
                 if (ntt.length > 2) {
                     for (var i = 2; i < ntt.length; i++) {
@@ -352,6 +367,7 @@ CodeCraft.Forms = new (function () {
         */
         _getComplexType: function (collection, ctName) {
             var r = null;
+
 
             for (var it in _complexTypes) {
                 if (it == collection) {
@@ -378,20 +394,29 @@ CodeCraft.Forms = new (function () {
 
 
     /**
-    * Objeto que traz os controles para trabalhar com Modelos de Dados representados em formulários.
-    * A principal função deste objeto é permitir a representação no HTML de objetos que possuam
-    * relação entre si, permitindo também um controle básico para adicionar/remover cada Instância.
+    * Objeto que permite o uso integrado de CodeCraft.Form com o CodeCraft.Widget.Factory.
     */
-    var _dataModelTools = {
-
+    var _factoryTools = {
         /**
-        * Altera o valor dos atributos informados removendo a marcação típica de um objeto de modelo.
+        * Identifica o node passado é filho de algum modelo de alguma fábrica.
+        *
+        * @private
+        *
+        * @paran {Node}                 n                       Elemento que se deseja testar.
+        *
+        * @return {Boolean}
+        */
+        IsChildOfModel: function (n) {
+            return (_factory === null || _factory.IsChildOfModel(n));
+        },
+        /**
+        * Altera os atributos do elemento alvo, removendo a marcação [M] pelo Indice indicado.
         *
         * @param {Node}                         e                               Node do elemento.
-        * @param {String[]}                     attrs                           Array com Nome dos atributos.
-        * @param {Integer}                      i                               Indice do modelo.
+        * @param {String[]}                     attrs                           Array com Nome dos atributos a serem alterados.
+        * @param {Integer}                      i                               Indice a ser utilizado.
         */
-        _changeModelAttrs: function (e, attrs, i) {
+        ChangeAttrs: function (e, attrs, i) {
             for (var it in attrs) {
                 var a = attrs[it];
 
@@ -400,286 +425,34 @@ CodeCraft.Forms = new (function () {
                 }
             }
         },
-        /**
-        * Identifica se o elemento informado é filho de um [data-ccw-fcon-object-model].
-        *
-        * @function _isChildOfModel
-        *
-        * @param {Node}                         n                               Node que será testado.
-        *
-        * @return {Boolean}
-        */
-        _isChildOfModel: function (n) {
-            var r = false;
-
-            var p = n.parentNode;
-            while (r == false && p.tagName.toLowerCase() != 'body') {
-                r = p.hasAttribute('data-ccw-fcon-object-model');
-                p = p.parentNode;
-            }
-
-            return r;
-        },
-        /**
-        * Identifica o Node [data-ccw-fcon-instance-of] que contém o elemento alvo.
-        *
-        * @function _parentInstance
-        *
-        * @param {Node}                         n                               Node filho de uma instância.
-        *
-        * @return {!Node}
-        */
-        _parentInstance: function (n) {
-            var r = false;
-
-            var p = n;
-            while (r == false && p.tagName.toLowerCase() != 'body') {
-                p = p.parentNode;
-                r = p.hasAttribute('data-ccw-fcon-instance-of');
-            }
-
-            return (r == true) ? p : null;
-        },
-        /**
-        * Inicia os botões de controle que estão contidos na Instancia indicada.
-        *
-        * @function _setInstanceControls
-        *
-        * @param {Node}                         n                               Node da instância alvo.
-        *
-        * @return {!Node}
-        */
-        _setInstanceControls: function (n) {
-            // Seta os botões de controle para adicionar nova instância
-            var btns = _dom.Get('[data-ccw-fcon-object-model-add]', n);
-            for (var it in btns) {
-                _dom.SetEvent(btns[it], 'click', _public.AddModelInstance);
-            }
-
-            // Seta os botões de controle para remover instância
-            var btns = _dom.Get('[data-ccw-fcon-object-model-remove]', n);
-            for (var it in btns) {
-                _dom.SetEvent(btns[it], 'click', _public.RemoveModelInstance);
-            }
-        },
-
 
 
 
 
         /**
-        * Inicia todos os Modelos de Dados existêntes na view atual.
-        *
-        * @param {Node}                         [t]                             Node dentro do qual estão os modelos a serem iniciados.
-        *
-        * @function _initiViewsDataModels
+        * Eventos para os objetos de fábricas de formulários
         */
-        _initiViewsDataModels: function (t) {
-            t = (t === undefined) ? document.body : t;
-            var dmls = _dom.Get('[data-ccw-fcon-object-model]', t);
-
-
-
-            // Seta atributos mínimos para os modelos encontrados.
-            for (var it in dmls) {
-                var m = dmls[it];
-
-                if (!m.hasAttribute('data-ccw-fcon-object-model-min')) {
-                    m.setAttribute('data-ccw-fcon-object-model-min', 1);
-                }
-                if (!m.hasAttribute('data-ccw-fcon-object-model-max')) {
-                    m.setAttribute('data-ccw-fcon-object-model-max', 0);
-                }
-            }
-
-
-
-
-            // Para cada modelo encontrado
-            for (var it in dmls) {
-                var m = dmls[it];
-
-                // Apenas se o modelo não for filho de outro modelo...
-                if (!_dataModelTools._isChildOfModel(m)) {
-                    var mName = m.getAttribute('data-ccw-fcon-object-model');
-                    var insert = m.getAttribute('data-ccw-fcon-object-model-insert');
-                    var min = parseInt(m.getAttribute('data-ccw-fcon-object-model-min'), 10);
-
-
-                    // Gera o número mínimo de modelos definidos.
-                    for (var i = 0; i < min; i++) {
-                        _dataModelTools._setModelInstance(mName, m.parentNode, insert);
-                    }
-                }
-            }
-
-
-            _dataModelTools._setInstanceControls(t);
-            _dataModelTools._setRemoveControls();
-        },
-
-
-
-
-
-        /**
-        * A partir do nome do Modelo de Dados informado prepara uma nova instância para ser inserida no DOM.
-        *
-        * @function _setModelInstance
-        *
-        * @param {String}                       mName                           Nome do Modelo de Dados que será adicionado.
-        * @param {Node}                         parent                          Node pai, onde o novo modelo será adicionado.
-        * @param {String}                       [insert = 'bottom']             Indica se o modelo deve ser adicionado ao topo ou abaixo
-        */
-        _setModelInstance: function (mName, parent, insert) {
-            insert = (insert === undefined) ? 'bottom' : insert.toLowerCase();
-            var m = _dom.Get('[data-ccw-fcon-object-model="' + mName + '"]', parent);
-
-
-            if (m != null) {
-                m = m[0];
-
-                // Apenas se o modelo atual não for filho de outro modelo...
-                if (!_dataModelTools._isChildOfModel(m)) {
-                    var max = parseInt(m.getAttribute('data-ccw-fcon-object-model-max'), 10);
-
-
-                    // Apenas adiciona nova instância se ainda não atinjiu o máximo definido
-                    var inst = _dom.Get('[data-ccw-fcon-instance-of="' + mName + '"]', parent);
-                    if (inst == null || inst.length < max) {
-
-                        // Identifica o ID mais alto entre as instancias que existem.
-                        var Id = 0;
-                        if (inst != null) {
-                            for (var it in inst) {
-                                var iId = parseInt(inst[it].getAttribute('data-ccw-fcon-instance-id'), 10);
-                                if (iId >= Id) {
-                                    Id = iId + 1;
-                                }
-                            }
-                        }
-
-
-                        // Clona o modelo
-                        var c = m.cloneNode(true);
-                        c.removeAttribute('data-ccw-fcon-object-model');
-                        c.removeAttribute('data-ccw-fcon-object-model-min');
-                        c.removeAttribute('data-ccw-fcon-object-model-max');
-                        c.removeAttribute('data-ccw-fcon-object-model-insert');
-                        c.setAttribute('data-ccw-fcon-instance-of', mName);
-                        c.setAttribute('data-ccw-fcon-instance-id', Id);
-
-
-                        // Prepara os elementos internos
-                        var tgtElem = _dom.Get('input, textarea, select, label, button', c);
-                        var tgtAttrs = ['for', 'id', 'name', 'data-ccw-fcon-object',
-                                        'data-ccw-fcon-object-model-remove-id', 'data-ccw-fcon-object-model-add-id']
-
-                        for (var it in tgtElem) {
-                            _dataModelTools._changeModelAttrs(tgtElem[it], tgtAttrs, Id);
-                        }
-
-
-                        // Insere a nova instância no DOM conforme a indicação.
-                        var nRef = m.nextSibling;
-                        if (insert == 'bottom' && inst != null) {
-                            nRef = inst[inst.length - 1].nextSibling;
-                        }
-
-                        if (nRef !== null) {
-                            parent.insertBefore(c, nRef);
-                        }
-                        else {
-                            parent.appendChild(c);
-                        }
-
-
-                        // Adiciona botões de controle
-                        _dataModelTools._setInstanceControls(c);
-
-
-                        // Resgata os modelos existentes dentro do novo modelo e inicia-os
-                        var cDMs = _dom.Get('[data-ccw-fcon-object-model]', c);
-                        for (var it in cDMs) {
-                            var cm = cDMs[it];
-
-                            var cmName = cm.getAttribute('data-ccw-fcon-object-model');
-                            var cInsert = cm.getAttribute('data-ccw-fcon-object-model-insert');
-                            var min = parseInt(cm.getAttribute('data-ccw-fcon-object-model-min'), 10);
-
-                            // Gera o número mínimo de modelos definidos.
-                            for (var i = 0; i < min; i++) {
-                                _dataModelTools._setModelInstance(cmName, c, cInsert);
-                            }
-                        }
-                    }
-                }
-            }
-        },
-
-
-
-
-
-        /**
-        * Efetua o controle dos botões "remove" das Instâncias definidas 
-        * não permitindo ao usuário remover itens obrigatórios.
-        *
-        * @function _setRemoveControls
-        */
-        _setRemoveControls: function () {
-            // Seleciona todas as instâncias
-            var allInst = _dom.Get('[data-ccw-fcon-instance-of]');
-            var collection = [];
-            var uniParent = [];
-
-
-
-
-            // Seleciona a primeira instância filha de cada node diferente
-            // tendo assim 1 representante de cada coleção existênte no DOM
-            for (var it in allInst) {
-                var i = allInst[it];
-                var p = i.parentNode;
-
-                if (uniParent.indexOf(p) === -1) {
-                    collection.push(i);
-                    uniParent.push(p);
-                }
-            }
-
-
-
-
-
+        FactoryEvents: {
             /**
-            * Identifica quais botões "remove" que os elementos da instância informada devem ser
-            * desabilitados.
+            * Imediatamente após adicionar uma nova Instância no DOM, efetua estes sets.
             *
-            * @param {Node}                     inst                        Instância alvo.
+            * @function onAddInstance
             *
+            * @param {FactoryObject}            f                       Objeto que representa a fábrica relacionada ao evento disparado.
+            * @param {Node}                     inst                    Node da instância que foi alterada durante este evento.
             */
-            var __disableRemoveButtons = function (inst) {
-                var p = inst.parentNode;
-                var n = inst.getAttribute('data-ccw-fcon-instance-of');
-                var m = _dom.Get('[data-ccw-fcon-object-model="' + n + '"]', p)[0];
-                var min = parseInt(m.getAttribute('data-ccw-fcon-object-model-min'), 10);
+            onAddInstance: function (f, inst) {
+                // Resgata todos os elementos de formulário dentro da nova Instância
+                var tgtElem = _dom.Get('input, textarea, select, label, button', inst);
+                var tgtAttrs = ['for', 'id', 'name', 'data-ccw-fcon-object'];
+                var i = parseInt(inst.getAttribute('data-ccw-factory-item-index'), 10);
 
-                // Resgata todos os botões "remove" das instâncias do tipo atual
-                var aBtns = _dom.Get('[data-ccw-fcon-instance-of="' + n + '"] [data-ccw-fcon-object-model-remove="' + n + '"]', p);
-                for (var i = 0; i < aBtns.length; i++) {
-                    if (i < min) {
-                        aBtns[i].setAttribute('disabled', 'disabled');
-                    }
+
+                for (var it in tgtElem) {
+                    _factoryTools.ChangeAttrs(tgtElem[it], tgtAttrs, i);
                 }
-            };
-
-
-
-
-            // Para cada coleção de instâncias
-            for (var it in collection) {
-                __disableRemoveButtons(collection[it]);
+                
+                _public.ConnectFields(inst);
             }
         }
     };
@@ -896,9 +669,6 @@ CodeCraft.Forms = new (function () {
         * @memberof Forms
         */
         StartForms: function () {
-            // Monta o html básico para todos os objetos modelos.
-            _dataModelTools._initiViewsDataModels();
-
             // Conecta os campos marcados
             _public.ConnectFields();
         },
@@ -912,18 +682,20 @@ CodeCraft.Forms = new (function () {
         * @function ConnectFields
         *
         * @memberof Forms
+        *
+        * @param {Node}                 [node]              Node dentro do qual os campos serão conectados.
         */
-        ConnectFields: function () {
-            var tgtInputs = _dom.Get('input, textarea, select');
+        ConnectFields: function (node) {
+            var tgtInputs = _dom.Get('input, textarea, select', node);
             var d = true;
-            
+
 
             for (var it in tgtInputs) {
                 var f = tgtInputs[it];
 
 
-                // apenas se for um objeto válido, que não seja parte de um modelo definido...
-                if (f.hasAttribute('data-ccw-fcon-object') && !_dataModelTools._isChildOfModel(f)) {
+                // apenas se for um objeto válido E que não seja parte de um modelo definido...
+                if (f.hasAttribute('data-ccw-fcon-object') && !_factoryTools.IsChildOfModel(f)) {
                     var cType = _nttTools._getComplexTypeByNotation(f.getAttribute('data-ccw-fcon-object'));
 
 
@@ -983,8 +755,8 @@ CodeCraft.Forms = new (function () {
                             var fc = CodeCraft.Forms;
                             var ev = (ft.IsField || ft.IsTextArea) ? 'keyup' : 'change';
 
-                            _dom.SetEvent(f, ev, fc.CheckAndFormatField);
-                            fc.CheckAndFormatField(f, false);
+                            //_dom.SetEvent(f, ev, fc.CheckAndFormatField);
+                            //fc.CheckAndFormatField(f, false);
                         }
                     }
 
@@ -1071,7 +843,7 @@ CodeCraft.Forms = new (function () {
                                 }
                                 else {
                                     switch (cType.Type.Name) {
-                                        // Verificação para String                                                                                                                                                                                                                                  
+                                        // Verificação para String                                                                                                                                                                                                                                                              
                                         case 'String':
                                             // Havendo um formatador, executa-o
                                             val = (ss != null && ss.Format != null) ? ss.Format(val) : val;
@@ -1084,7 +856,7 @@ CodeCraft.Forms = new (function () {
 
                                             break;
 
-                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                 
+                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                             
                                         case 'Date':
                                         case 'Byte':
                                         case 'Short':
@@ -1150,7 +922,7 @@ CodeCraft.Forms = new (function () {
                 var f = tgtInputs[it];
 
                 // Apenas se não for um item de um modelo
-                if (!_dataModelTools._isChildOfModel(f)) {
+                if (!_factoryTools.IsChildOfModel(f)) {
                     var r = fc.CheckAndFormatField(f, true, false);
 
                     if (r !== true) {
@@ -1212,65 +984,26 @@ CodeCraft.Forms = new (function () {
 
 
 
-
-
-
-
-
-
-
-
-
-
         /**
-        * Adiciona uma nova instância de objeto a partir do modelo definido.
+        * Efetua a integração com a lib "CodeCraft.Widget.Factory"
         * 
-        * @function AddModelInstance
+        * @function InityWidgetFactory
         *
         * @memberof Forms
-        *
-        * @param {Event}                    o                               Evento.
         */
-        AddModelInstance: function (o) {
-            o = o.target;
-            var mName = o.getAttribute('data-ccw-fcon-object-model-add');
-            var m = _dom.Get('[data-ccw-fcon-object-model="' + mName + '"]');
+        InityWidgetFactory: function () {
+            // Efetua integração com "CodeCraft.Widget.Factory" 
+            if (typeof (CodeCraft.Widget) !== 'undefined' && typeof (CodeCraft.Widget.Factory) !== 'undefined') {
+                _factory = CodeCraft.Widget.Factory;
 
-
-            if (m != null) {
-                m = m[0];
-
-                // Identifica o elemento parent
-                var p = _dataModelTools._parentInstance(o);
-                if (p == null) {
-                    p = m.parentNode;
-                }
-
-                _dataModelTools._setModelInstance(mName, p, undefined);
-                _dataModelTools._setRemoveControls();
+                // Associa os eventos para as fábricas de formulários
+                _factory.FactoryEvents['CodeCraftFactoryEvents'] = _factoryTools.FactoryEvents;
             }
-        },
-
-
-
-
-
-        /**
-        * Remove a instância do modelo apontada.
-        * 
-        * @function RemoveModelInstance
-        *
-        * @memberof Forms
-        *
-        * @param {Event}                    o                               Evento.
-        */
-        RemoveModelInstance: function (o) {
-            o = o.target;
-            var p = _dataModelTools._parentInstance(o);
-            p.parentNode.removeChild(p);
-            _dataModelTools._setRemoveControls();
         }
     };
+
+
+
 
 
 
