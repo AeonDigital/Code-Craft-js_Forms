@@ -64,19 +64,19 @@ CodeCraft.Forms = new (function () {
     Suponha as seguintes tabelas e propriedades
 
     Tabelas : 
-        Client = {
-            Id : null,
-            Name : 'String',
-            Phone : 'Telephone[]'
-        };
-        Telephone = {
-            Id : null,
-            Number : 'String'
+    Client = {
+    Id : null,
+    Name : 'String',
+    Phone : 'Telephone[]'
+    };
+    Telephone = {
+    Id : null,
+    Number : 'String'
     };
 
-    Um campo com o atributo [data-ccw-fcon-object="Client[0].Name"]
+    Um campo com o atributo [data-ccw-fcon-object="Client[N0].Name"]
     irá fazer uma conexão com a propriedade "Name" da tabela "Client".
-    A indicação [0] define que o objeto é novo.
+    A indicação [Nx] define que o objeto é novo.
 
     Fosse usado o atributo [data-ccw-fcon-object="Client[25].Name"]
     indica que o campo deve mostrar o valor atual da propriedade "Name" da tabela "Client"
@@ -93,26 +93,26 @@ CodeCraft.Forms = new (function () {
 
 
     <form action="index.html" method="post" novalidate="novalidate">
-        <div>
-        <label for="ViewForm_0_FullName">Nome</label>
-        <input type="text" id="ViewForm_0_FullName" name="ViewForm_0_FullName" class="iCommom small-fix"
-                data-ccw-fcon-object="ViewForm[0].FullName"
-                title="Nome" />
-        </div>
+    <div>
+    <label  for="ViewForm[N0].FullName">Nome</label>
+    <input  type="text"
+    title="Nome"
+    data-ccw-fcon-object="ViewForm[N0].FullName" />
+    </div>
 
-        <div>
-            <label for="ViewForm_0_Email">Email</label>
-            <input type="text" id="ViewForm_0_Email" name="ViewForm_0_Email" class="iCommom"
-                    data-ccw-fcon-object="ViewForm[0].Email"
-                    title="Email" />
-        </div>
+    <div>
+    <label  for="ViewForm[N0].Email">Email</label>
+    <input  type="text" 
+    title="Email"
+    data-ccw-fcon-object="ViewForm[N0].Email" />
+    </div>
 
-        <div>
-            <label for="ViewForm_0_Mensagem_1_Conteudo">Mensagem</label>
-            <input type="text" id="ViewForm_0_Mensagem_1_Conteudo" name="ViewForm_0_Mensagem_1_Conteudo" class="iCommom"
-                data-ccw-fcon-object="ViewForm[0].Mensagem[1].Conteudo"
-                title="Mensagem" />
-        </div>
+    <div>
+    <label  for="ViewForm[N0].Mensagem">Mensagem</label>
+    <input  type="text" 
+    title="Mensagem"
+    data-ccw-fcon-object="ViewForm[N0].Mensagem" />
+    </div>
     </form>
 
 
@@ -123,9 +123,9 @@ CodeCraft.Forms = new (function () {
 
 
     CodeCraft.Forms.AddNewCollection('ViewForm', [
-        CodeCraft.Forms.CreateFormType('FullName', 'String', 64, null, null, null, false, null, null),
-        CodeCraft.Forms.CreateFormType('Email', 'String', null, null, null, null, false, null, String.Pattern.World.Email),
-        CodeCraft.Forms.CreateFormType('Mensagem', 'String', null, null, null, null, false, null, null)
+    CodeCraft.Forms.CreateFormType('FullName', 'String', 64, null, null, null, false, null, null),
+    CodeCraft.Forms.CreateFormType('Email', 'String', null, null, null, null, false, null, String.Pattern.World.Email),
+    CodeCraft.Forms.CreateFormType('Mensagem', 'String', null, null, null, null, false, null, null)
     ]);
 
     
@@ -414,14 +414,14 @@ CodeCraft.Forms = new (function () {
         *
         * @param {Node}                         e                               Node do elemento.
         * @param {String[]}                     attrs                           Array com Nome dos atributos a serem alterados.
-        * @param {Integer}                      i                               Indice a ser utilizado.
+        * @param {Integer}                      id                               Indice a ser utilizado.
         */
-        ChangeAttrs: function (e, attrs, i) {
+        ChangeAttrs: function (e, attrs, id) {
             for (var it in attrs) {
                 var a = attrs[it];
 
                 if (e.hasAttribute(a)) {
-                    e.setAttribute(a, e.getAttribute(a).replace('[M]', i));
+                    e.setAttribute(a, e.getAttribute(a).replace('[M]', id));
                 }
             }
         },
@@ -443,15 +443,15 @@ CodeCraft.Forms = new (function () {
             */
             onAddInstance: function (f, inst) {
                 // Resgata todos os elementos de formulário dentro da nova Instância
-                var tgtElem = _dom.Get('input, textarea, select, label, button', inst);
+                var tgtElem = _dom.Get('input, textarea, select, label, button, datalist', inst);
                 var tgtAttrs = ['for', 'id', 'name', 'data-ccw-fcon-object'];
-                var i = parseInt(inst.getAttribute('data-ccw-factory-item-index'), 10);
+                var id = parseInt(inst.getAttribute('data-ccw-factory-item-id'), 10);
 
 
                 for (var it in tgtElem) {
-                    _factoryTools.ChangeAttrs(tgtElem[it], tgtAttrs, i);
+                    _factoryTools.ChangeAttrs(tgtElem[it], tgtAttrs, id);
                 }
-                
+
                 _public.ConnectFields(inst);
             }
         }
@@ -696,14 +696,38 @@ CodeCraft.Forms = new (function () {
 
                 // apenas se for um objeto válido E que não seja parte de um modelo definido...
                 if (f.hasAttribute('data-ccw-fcon-object') && !_factoryTools.IsChildOfModel(f)) {
-                    var cType = _nttTools._getComplexTypeByNotation(f.getAttribute('data-ccw-fcon-object'));
+                    var fcon = f.getAttribute('data-ccw-fcon-object');
+                    var cType = _nttTools._getComplexTypeByNotation(fcon);
 
 
                     if (cType == null) {
-                        console.log('Input has an invalid value for attribute "data-ccw-fcon-object". Found "' + f.getAttribute('data-ccw-fcon-object') + '".');
+                        console.log('Input has an invalid value for attribute "data-ccw-fcon-object". Found "' + fcon + '".');
                     }
                     else {
                         var ft = _bt.GetFieldType(f);
+
+                        f.setAttribute('id', fcon);
+                        f.setAttribute('name', fcon);
+
+
+
+                        // Preenche os campos SELECT caso o tipo seja um enumerador
+                        if (ft.IsSelect && cType.Type.Name == 'Enum') {
+                            while (f.hasChildNodes()) {
+                                f.removeChild(f.firstChild);
+                            }
+
+                            for (var ii in cType.RefType) {
+                                var opt = document.createElement('option');
+                                opt.setAttribute('value', ii);
+                                opt.textContent = cType.RefType[ii];
+
+                                f.appendChild(opt);
+                            }
+                        }
+
+
+
 
                         // Marca todos os checkbox como não validáveis
                         if (ft.IsCheckBox) {
@@ -755,8 +779,8 @@ CodeCraft.Forms = new (function () {
                             var fc = CodeCraft.Forms;
                             var ev = (ft.IsField || ft.IsTextArea) ? 'keyup' : 'change';
 
-                            //_dom.SetEvent(f, ev, fc.CheckAndFormatField);
-                            //fc.CheckAndFormatField(f, false);
+                            _dom.SetEvent(f, ev, fc.CheckAndFormatField);
+                            fc.CheckAndFormatField(f, false);
                         }
                     }
 
@@ -838,12 +862,13 @@ CodeCraft.Forms = new (function () {
                                 // ENUNs são testados aqui
                                 isValid = cType.Type.Validate(val, cType.RefType);
 
+
                                 if (!isValid) {
                                     isValid = (r === true) ? false : ValidateError.InvalidType;
                                 }
                                 else {
                                     switch (cType.Type.Name) {
-                                        // Verificação para String                                                                                                                                                                                                                                                              
+                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                         
                                         case 'String':
                                             // Havendo um formatador, executa-o
                                             val = (ss != null && ss.Format != null) ? ss.Format(val) : val;
@@ -856,7 +881,7 @@ CodeCraft.Forms = new (function () {
 
                                             break;
 
-                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                             
+                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                        
                                         case 'Date':
                                         case 'Byte':
                                         case 'Short':
@@ -901,7 +926,7 @@ CodeCraft.Forms = new (function () {
         * Retorna True caso todos passem ou um array com objetos "ValidateFormResult" referentes
         * aos campos que falharam na validação.
         * 
-        * @function CheckFields
+        * @function CheckFormFields
         *
         * @memberof Forms
         *
@@ -911,7 +936,7 @@ CodeCraft.Forms = new (function () {
         *
         * @return {True|ValidateFormResult[]}
         */
-        CheckFields: function (form, labels) {
+        CheckFormFields: function (form, labels) {
             var errors = [];
             var fc = CodeCraft.Forms;
             var tgtInputs = _dom.Get('[data-ccw-fcon-object]', form);
@@ -943,6 +968,180 @@ CodeCraft.Forms = new (function () {
 
             return (errors.length === 0) ? true : errors;
         },
+
+
+
+
+
+        /**
+        * A partir dos campos conectados do formulário alvo, remonta o/s objeto/s que devem ser enviado/s
+        * para o servidor.
+        *
+        * 
+        * @function RetrieveFormObjects
+        *
+        * @memberof Forms
+        *
+        * @param {Node}                     form                            Elemento "form" cujos campos conectados serão retornados.
+        *
+        * @return {!JSON}
+        */
+        RetrieveFormObjects: function (form) {
+            var tgtInputs = _dom.Get('input, textarea, select', form);
+            var returnData = {};
+            var hasValue = false;
+            var isOk = true;
+
+
+            // Para cada campo do formulário alvo...
+            for (var it in tgtInputs) {
+                var f = tgtInputs[it];
+
+                // Apenas se for um objeto válido E que não seja parte de um modelo definido...
+                if (f.hasAttribute('data-ccw-fcon-object') && !_factoryTools.IsChildOfModel(f)) {
+                    var cType = null;
+                    var fcon = f.getAttribute('data-ccw-fcon-object');
+                    var parentModel = returnData;
+
+                    var split = fcon.split('.');
+                    var attr = split[split.length - 1];
+                    var lastModelName = fcon.split('[')[0];
+
+
+                    for (var i = 0; i < split.length - 1; i++) {
+                        var data = _nttTools._unMake(split[i]);
+                        var newObject = { __new: data.New, Id: data.Id };
+                        var n = data.Name;
+                        var arrObj = null;
+
+
+                        // Para o primeiro objeto...
+                        if (i == 0) {
+                            if (parentModel[n] === undefined) {
+                                parentModel[n] = newObject;
+                            }
+                        }
+                        // Para todos os demais níveis
+                        else {
+                            cType = _nttTools._getComplexType(lastModelName, n);
+                            lastModelName = cType.RefType;
+
+
+                            // Se o objeto deste nível não foi setado... seta-o
+                            if (parentModel[n] === undefined) {
+                                parentModel[n] = (cType.Type.Name == 'Object[]') ? [newObject] : newObject;
+                            }
+
+                            // Se for uma coleção de um tipo de objetos, verifica se o objeto
+                            // com o Id escolhido já foi setado...
+                            if (cType.Type.Name == 'Object[]') {
+                                for (var ii in parentModel[n]) {
+                                    if (parentModel[n][ii].Id == data.Id) {
+                                        arrObj = parentModel[n][ii];
+                                        break;
+                                    }
+                                }
+
+                                // Se nenhum objeto possui o Id indicado, é um novo objeto
+                                if (arrObj == null) {
+                                    parentModel[n].push(newObject);
+                                    arrObj = parentModel[n][parentModel[n].length - 1];
+                                }
+                            }
+
+                        }
+
+                        // Seleciona o novo objeto para ter seu valor setado
+                        parentModel = (arrObj == null) ? parentModel[n] : arrObj;
+                    }
+
+
+
+
+                    // Efetua sets finais para o valor encontrado...
+                    var ft = _bt.GetFieldType(f);
+                    var cType = _nttTools._getComplexType(lastModelName, attr);
+                    var val = (ft.IsCheckBox) ? _bt.TryParse.ToBoolean(f.checked) : f.value;
+
+                    
+                    // Verifica se a string é válida dentro das especificações do SuperType
+                    var ss = (_bt.IsNotNullValue(cType.FormatSet)) ? cType.FormatSet : null;                    
+                    val = (ss != null && ss.RemoveFormat != null) ? ss.RemoveFormat(val) : val;
+                    val = cType.Type.TryParse(val, cType.RefType);
+
+
+                    // Se o valor setado for Vazio e este campo não permite este tipo de valor... 
+                    // Ou se é um campo que não é permitido a definição de seu valor externamente...
+                    if ((!_bt.IsNotNullValue(val) && !cType.AllowEmpty) || !cType.AllowSet) {
+                        val = null;
+                    }
+
+
+                    parentModel[attr] = val;
+                    hasValue = true;
+                }
+            }
+
+
+
+
+
+            /**
+            * Trata o objeto que será retornado removendo propriedades de marcação.
+            *
+            * @param {JSON}             json            Objeto que será tratado.
+            *
+            * @return {JSON}
+            */
+            var __rewriteData = function (json) {
+
+                // Se o objeto é novo, remove o atributo "Id"
+                if (json['__new']) {
+                    delete json['Id'];
+                }
+
+
+                // Remove o atributo de marcação "__new"
+                delete json['__new'];
+
+
+                // Para cada propriedade do objeto...
+                for (var it in json) {
+                    var obj = json[it];
+
+
+                    if (_bt.IsArray(obj)) {
+                        for (var ii in obj) {
+                            __rewriteData(obj[ii]);
+                        }
+                    }
+                    else if (_bt.IsJSON(obj)) {
+                        __rewriteData(obj);
+                    }
+                }
+            };
+
+
+
+
+
+            __rewriteData(returnData);
+            return (isOk && hasValue) ? returnData : null;
+        },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
