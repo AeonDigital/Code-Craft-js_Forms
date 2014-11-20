@@ -706,9 +706,11 @@ CodeCraft.Forms = new (function () {
                     else {
                         var ft = _bt.GetFieldType(f);
 
-                        f.setAttribute('id', fcon);
-                        f.setAttribute('name', fcon);
 
+                        if (!ft.IsRadio) {
+                            f.setAttribute('id', fcon);
+                        }
+                        f.setAttribute('name', fcon);
 
 
                         // Preenche os campos SELECT caso o tipo seja um enumerador
@@ -868,7 +870,7 @@ CodeCraft.Forms = new (function () {
                                 }
                                 else {
                                     switch (cType.Type.Name) {
-                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                         
+                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                  
                                         case 'String':
                                             // Havendo um formatador, executa-o
                                             val = (ss != null && ss.Format != null) ? ss.Format(val) : val;
@@ -881,7 +883,7 @@ CodeCraft.Forms = new (function () {
 
                                             break;
 
-                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                        
+                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                 
                                         case 'Date':
                                         case 'Byte':
                                         case 'Short':
@@ -1000,14 +1002,16 @@ CodeCraft.Forms = new (function () {
                 // Apenas se for um objeto válido E que não seja parte de um modelo definido...
                 if (f.hasAttribute('data-ccw-fcon-object') && !_factoryTools.IsChildOfModel(f)) {
                     var cType = null;
+                    var ft = _bt.GetFieldType(f);
                     var fcon = f.getAttribute('data-ccw-fcon-object');
-                    var parentModel = returnData;
-
                     var split = fcon.split('.');
                     var attr = split[split.length - 1];
                     var lastModelName = fcon.split('[')[0];
+                    var parentModel = returnData;
 
 
+
+                    // Seleciona o objeto alvo para o set do valor
                     for (var i = 0; i < split.length - 1; i++) {
                         var data = _nttTools._unMake(split[i]);
                         var newObject = { __new: data.New, Id: data.Id };
@@ -1058,27 +1062,46 @@ CodeCraft.Forms = new (function () {
 
 
 
-                    // Efetua sets finais para o valor encontrado...
-                    var ft = _bt.GetFieldType(f);
-                    var cType = _nttTools._getComplexType(lastModelName, attr);
-                    var val = (ft.IsCheckBox) ? _bt.TryParse.ToBoolean(f.checked) : f.value;
 
-                    
-                    // Verifica se a string é válida dentro das especificações do SuperType
-                    var ss = (_bt.IsNotNullValue(cType.FormatSet)) ? cType.FormatSet : null;                    
-                    val = (ss != null && ss.RemoveFormat != null) ? ss.RemoveFormat(val) : val;
-                    val = cType.Type.TryParse(val, cType.RefType);
+                    if (ft.IsRadio) {
+                        // SE o valor para esta propriedade ainda não foi setada...
+                        if (parentModel[attr] === undefined) {
+                            var rName = f.getAttribute('name');
+                            var rVal = null;
+                            var allRadios = _dom.Get('input[name="' + rName + '"]');
+                            
+                            for (var ii in allRadios) {
+                                if (allRadios[ii].checked) { rVal = allRadios[ii].value; break; }
+                            }
+                            
+                            parentModel[attr] = rVal;
+                            hasValue = true;
+                        }
+                    }
+                    else {
+                        // Efetua sets finais para o valor encontrado...
+                        var cType = _nttTools._getComplexType(lastModelName, attr);
+                        var val = (ft.IsCheckBox) ? _bt.TryParse.ToBoolean(f.checked) : f.value;
 
 
-                    // Se o valor setado for Vazio e este campo não permite este tipo de valor... 
-                    // Ou se é um campo que não é permitido a definição de seu valor externamente...
-                    if ((!_bt.IsNotNullValue(val) && !cType.AllowEmpty) || !cType.AllowSet) {
-                        val = null;
+                        // Verifica se a string é válida dentro das especificações do SuperType
+                        var ss = (_bt.IsNotNullValue(cType.FormatSet)) ? cType.FormatSet : null;
+                        val = (ss != null && ss.RemoveFormat != null) ? ss.RemoveFormat(val) : val;
+                        val = cType.Type.TryParse(val, cType.RefType);
+
+
+                        // Se o valor setado for Vazio e este campo não permite este tipo de valor... 
+                        // Ou se é um campo que não é permitido a definição de seu valor externamente...
+                        if ((!_bt.IsNotNullValue(val) && !cType.AllowEmpty) || !cType.AllowSet) {
+                            val = null;
+                        }
+
+
+                        parentModel[attr] = val;
+                        hasValue = true;
                     }
 
 
-                    parentModel[attr] = val;
-                    hasValue = true;
                 }
             }
 
