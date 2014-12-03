@@ -65,13 +65,13 @@ CodeCraft.Forms = new (function () {
 
     Tabelas : 
     Client = {
-    Id : null,
-    Name : 'String',
-    Phone : 'Telephone[]'
+        Id : null,
+        Name : 'String',
+        Phone : 'Telephone[]'
     };
     Telephone = {
-    Id : null,
-    Number : 'String'
+        Id : null,
+        Number : 'String'
     };
 
     Um campo com o atributo [data-ccw-fcon-object="Client[N0].Name"]
@@ -93,26 +93,26 @@ CodeCraft.Forms = new (function () {
 
 
     <form action="index.html" method="post" novalidate="novalidate">
-    <div>
-    <label  for="ViewForm[N0].FullName">Nome</label>
-    <input  type="text"
-    title="Nome"
-    data-ccw-fcon-object="ViewForm[N0].FullName" />
-    </div>
+        <div>
+            <label  for="ViewForm[N0].FullName">Nome</label>
+            <input  type="text"
+                    title="Nome"
+                    data-ccw-fcon-object="ViewForm[N0].FullName" />
+        </div>
 
-    <div>
-    <label  for="ViewForm[N0].Email">Email</label>
-    <input  type="text" 
-    title="Email"
-    data-ccw-fcon-object="ViewForm[N0].Email" />
-    </div>
+        <div>
+            <label  for="ViewForm[N0].Email">Email</label>
+            <input  type="text" 
+                    title="Email"
+                    data-ccw-fcon-object="ViewForm[N0].Email" />
+        </div>
 
-    <div>
-    <label  for="ViewForm[N0].Mensagem">Mensagem</label>
-    <input  type="text" 
-    title="Mensagem"
-    data-ccw-fcon-object="ViewForm[N0].Mensagem" />
-    </div>
+        <div>
+            <label  for="ViewForm[N0].Mensagem">Mensagem</label>
+            <input  type="text" 
+                    title="Mensagem"
+                    data-ccw-fcon-object="ViewForm[N0].Mensagem" />
+        </div>
     </form>
 
 
@@ -123,9 +123,9 @@ CodeCraft.Forms = new (function () {
 
 
     CodeCraft.Forms.AddNewCollection('ViewForm', [
-    CodeCraft.Forms.CreateFormType('FullName', 'String', 64, null, null, null, false, null, null),
-    CodeCraft.Forms.CreateFormType('Email', 'String', null, null, null, null, false, null, String.Pattern.World.Email),
-    CodeCraft.Forms.CreateFormType('Mensagem', 'String', null, null, null, null, false, null, null)
+        CodeCraft.Forms.CreateFormType('FullName', 'String', 64, null, null, null, false, null, null),
+        CodeCraft.Forms.CreateFormType('Email', 'String', null, null, null, null, false, null, String.Pattern.World.Email),
+        CodeCraft.Forms.CreateFormType('Mensagem', 'String', null, null, null, null, false, null, null)
     ]);
 
     
