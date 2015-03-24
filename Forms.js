@@ -342,7 +342,7 @@ CodeCraft.Forms = new (function () {
         *
         * @param {String}                       ntt                         Notação usada para a conexão do campo ao atributo alvo.
         *
-        * @return {!ComplexType}
+        * @return {?ComplexType}
         */
         _getComplexTypeByNotation: function (ntt) {
             var r = null;
@@ -376,7 +376,7 @@ CodeCraft.Forms = new (function () {
         * @param {String}                       collection                  Nome da coleção.
         * @param {String}                       ctName                      Nome do tipo que será selecionado.
         *
-        * @return {!ComplexType}
+        * @return {?ComplexType}
         */
         _getComplexType: function (collection, ctName) {
             var r = null;
@@ -405,7 +405,7 @@ CodeCraft.Forms = new (function () {
         * @param {String}                       ntt                         Notação usada para identificar o campo/valor a ser resgatado.
         * @param {ComplexType}                  cType                       Objeto ComplexType do campo que será setado.
         *
-        * @return {!String}
+        * @return {?String}
         */
         _getValueFromAutoFill: function (field, cType) {
             var rVal = null;
@@ -756,7 +756,7 @@ CodeCraft.Forms = new (function () {
         * @param {String}                   [parDefault = null]             Valor inicial para uma variável deste tipo.
         * @param {DataFormat}               [parFormatSet = null]           Objeto de definições para formatação.
         *
-        * @return {!ComplexType}
+        * @return {?ComplexType}
         */
         CreateFormType: function (parName, parType, parLength, parMin, parMax,
                                             parRefType, parAllowEmpty, parDefault, parFormatSet) {
@@ -1147,7 +1147,7 @@ CodeCraft.Forms = new (function () {
         *
         * @param {Node}                     form                            Elemento "form" cujos campos conectados serão retornados.
         *
-        * @return {!JSON}
+        * @return {?JSON}
         */
         RetrieveFormObjects: function (form) {
             var tgtInputs = _dom.Get('input, textarea, select', form);
