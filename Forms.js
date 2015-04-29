@@ -1331,7 +1331,7 @@ CodeCraft.Forms = new (function () {
 
 
         /**
-        * Prepara todos os campos <input> do formulário alvo para dispararem o evendo indicado
+        * Prepara todos os campos <input> do formulário alvo para dispararem o evento indicado
         * ao pressionar o botão "Enter".
         * 
         * @function SetActionOnEnter
