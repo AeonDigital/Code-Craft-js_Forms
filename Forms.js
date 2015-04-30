@@ -922,7 +922,7 @@ CodeCraft.Forms = new (function () {
 
                             // Seta o valor padrão caso nenhum seja informado
                             if (cType.Default != null && f.value == '') {
-                                if (cType.Type.Name === 'Date' && cType.Default === 'new') {
+                                if (cType.Type.Name === 'Date' && cType.Default.toLowerCase() === 'now()') {
                                     var val = new Date();
                                     var use = (String.Pattern != undefined) ? String.Pattern.World.Dates.DateTime : null;
                                     use = (cType.FormatSet != null && cType.FormatSet.Format != null) ? cType.FormatSet : use;
