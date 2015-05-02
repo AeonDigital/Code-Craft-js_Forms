@@ -541,7 +541,7 @@ CodeCraft.Forms = new (function () {
         *
         * @param {Node}                         e                               Node do elemento.
         * @param {String[]}                     attrs                           Array com Nome dos atributos a serem alterados.
-        * @param {Integer}                      id                               Indice a ser utilizado.
+        * @param {Integer}                      id                              Indice a ser utilizado.
         */
         ChangeAttrs: function (e, attrs, id) {
             for (var it in attrs) {
@@ -811,6 +811,9 @@ CodeCraft.Forms = new (function () {
         * @memberof Forms
         */
         StartForms: function () {
+            _public.CheckFactoryInstances();
+
+
             // Conecta os campos marcados
             _public.ConnectFields();
         },
@@ -922,7 +925,7 @@ CodeCraft.Forms = new (function () {
 
                             // Seta o valor padrão caso nenhum seja informado
                             if (cType.Default != null && f.value == '') {
-                                
+
                                 if (cType.Type.Name === 'Date' && cType.Default.toLowerCase() === 'now()') {
                                     var val = new Date();
                                     var use = (String.Pattern != undefined) ? String.Pattern.World.Dates.DateTime : null;
@@ -1032,7 +1035,7 @@ CodeCraft.Forms = new (function () {
                                 }
                                 else {
                                     switch (cType.Type.Name) {
-                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
                                         case 'String':
                                             // Havendo um formatador, executa-o
                                             val = (ss != null && ss.Format != null) ? ss.Format(val) : val;
@@ -1045,7 +1048,7 @@ CodeCraft.Forms = new (function () {
 
                                             break;
 
-                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
                                         case 'Date':
                                         case 'Byte':
                                         case 'Short':
@@ -1368,13 +1371,16 @@ CodeCraft.Forms = new (function () {
 
 
         /**
-        * Efetua a integração com a lib "CodeCraft.Widget.Factory"
+        * Se o objeto "CodeCraft.Widget.Factory" estiver presente, adiciona em sua 
+        * lista de eventos os eventos as configurações definidas em "_factoryTools.FactoryEvents"
+        * Isto permite conectar os campos internos dos objetos gerados pela "factory".
+        * No node da factory alvo, use o atributo [data-ccw-factory-events="CodeCraftFactoryEvents"]
         * 
-        * @function InityWidgetFactory
+        * @function ConnectEventsForWidgetFactory
         *
         * @memberof Forms
         */
-        InityWidgetFactory: function () {
+        ConnectEventsForWidgetFactory: function () {
             // Efetua integração com "CodeCraft.Widget.Factory" 
             if (typeof (CodeCraft.Widget) !== 'undefined' && typeof (CodeCraft.Widget.Factory) !== 'undefined') {
                 _factory = CodeCraft.Widget.Factory;
@@ -1593,6 +1599,8 @@ CodeCraft.Forms = new (function () {
                     if (form != null) {
                         var focus = afd[fid];
                         var iname = Object.keys(focus)[0];
+
+
                         __checkInstancesOfFactory(fid, focus[iname], iname, 1);
                         __resetIDFields(focus[iname], 1, iname, iname);
                     }
