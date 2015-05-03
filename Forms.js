@@ -898,7 +898,7 @@ CodeCraft.Forms = new (function () {
                             f.setAttribute('data-ccw-fcon-validate', 'false');
                         }
                         else if (ft.IsField || ft.IsTextArea || ft.IsSelect) {
-                            if (cType.AllowSet === false) { f.setAttribute('disabled', 'disabled'); }
+                            if (cType.AllowSet === false) { f.setAttribute('disabled', 'disabled'); f.setAttribute('data-ccw-fcon-validate', 'false'); }
                             if (cType.AllowNull === false && !f.hasAttribute('required')) { f.setAttribute('required', 'required'); }
 
                             // Sets para Campos Comuns ou TextArea
@@ -999,10 +999,16 @@ CodeCraft.Forms = new (function () {
                     var req = (_bt.IsNotNullValue(o.required)) ? _bt.TryParse.ToBoolean(o.required) : false;
 
 
-                    // Verifica valores obrigatórios
-                    if (req && o.value == '') {
-                        var err = (ft.IsSelect) ? ValidateError.ValueNotSelected : ValidateError.RequiredValueNotSet;
-                        isValid = (r === true) ? false : err;
+                    // Se o valor não está definido...
+                    if (o.value == '') {
+                        // Sendo um campo obrigatório
+                        if (req) {
+                            var err = (ft.IsSelect) ? ValidateError.ValueNotSelected : ValidateError.RequiredValueNotSet;
+                            isValid = (r === true) ? false : err;
+                        }
+                        else {
+                            isValid = true;
+                        }
                     }
                     else {
 
@@ -1015,6 +1021,7 @@ CodeCraft.Forms = new (function () {
 
                             // Verifica se a string é válida dentro das especificações do SuperType
                             isValid = (ss != null && _bt.IsNotNullValue(ss.Check)) ? ss.Check(val) : true;
+
 
                             if (!isValid) {
                                 isValid = (r === true) ? false : ValidateError.InvalidValue;
@@ -1035,7 +1042,7 @@ CodeCraft.Forms = new (function () {
                                 }
                                 else {
                                     switch (cType.Type.Name) {
-                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
                                         case 'String':
                                             // Havendo um formatador, executa-o
                                             val = (ss != null && ss.Format != null) ? ss.Format(val) : val;
@@ -1048,7 +1055,7 @@ CodeCraft.Forms = new (function () {
 
                                             break;
 
-                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
                                         case 'Date':
                                         case 'Byte':
                                         case 'Short':
