@@ -1157,10 +1157,11 @@ CodeCraft.Forms = new (function () {
         * @memberof Forms
         *
         * @param {Node}                     form                            Elemento "form" cujos campos conectados serão retornados.
+        * @param {Boolean}                  [stringfy]                      Quando true irá retornar o objeto JSON em formato de string.
         *
         * @return {?JSON}
         */
-        RetrieveFormObjects: function (form) {
+        RetrieveFormObjects: function (form, stringfy) {
             var tgtInputs = _dom.Get('input, textarea, select', form);
             var returnData = {};
             var hasValue = false;
@@ -1321,6 +1322,11 @@ CodeCraft.Forms = new (function () {
 
 
             __rewriteData(returnData);
+
+            // Se for para preparar o objeto para ser enviado...
+            if(stringfy !== undefined && stringfy == true) {
+                returnData = JSON.stringify(returnData);
+            }
             return (isOk && hasValue) ? returnData : null;
         },
 
