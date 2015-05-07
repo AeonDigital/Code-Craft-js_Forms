@@ -662,6 +662,19 @@ CodeCraft.Forms = new (function () {
 
 
         /**
+        * Indica se, ao resgatar os dados de um formulário usando o método "RetrieveFormObjects"
+        * há algum objeto novo que deverá ser persistido. 
+        * Um objeto novo é identificado pois não possui um Id próprio.
+        *
+        * @type {JSON}
+        */
+        HasNewObjects: false,
+
+
+
+
+
+        /**
         * Legendas para mensagens de erro amigáveis.
         *
         * @memberof Forms
@@ -1042,7 +1055,7 @@ CodeCraft.Forms = new (function () {
                                 }
                                 else {
                                     switch (cType.Type.Name) {
-                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
                                         case 'String':
                                             // Havendo um formatador, executa-o
                                             val = (ss != null && ss.Format != null) ? ss.Format(val) : val;
@@ -1055,7 +1068,7 @@ CodeCraft.Forms = new (function () {
 
                                             break;
 
-                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
                                         case 'Date':
                                         case 'Byte':
                                         case 'Short':
@@ -1150,6 +1163,7 @@ CodeCraft.Forms = new (function () {
         /**
         * A partir dos campos conectados do formulário alvo, remonta o/s objeto/s que devem ser enviado/s
         * para o servidor.
+        * A propriedade "HasNewObjects" indicará se há algum objeto novo entre os resgatados do formulário.
         *
         * 
         * @function RetrieveFormObjects
@@ -1162,17 +1176,24 @@ CodeCraft.Forms = new (function () {
         * @return {?JSON}
         */
         RetrieveFormObjects: function (form, stringfy) {
+            _public.HasNewObjects = false;
             var tgtInputs = _dom.Get('input, textarea, select', form);
             var returnData = {};
             var hasValue = false;
             var isOk = true;
 
 
-            // Para cada campo do formulário alvo...
+
+
+            // Varre todos os campos do formulário para remontar o objeto 
+            // que está sendo representado.
+            // Então, para cada campo encontrado...
             for (var it in tgtInputs) {
                 var f = tgtInputs[it];
 
-                // Apenas se for um objeto válido E que não seja parte de um modelo definido...
+
+                // Se for um campo que está conectado a um complexType e que
+                // não seja parte de um modelo de uma factory
                 if (f.hasAttribute('data-ccw-fcon-object') && !_factoryTools.IsChildOfModel(f)) {
                     var cType = null;
                     var ft = _bt.GetFieldType(f);
@@ -1184,7 +1205,13 @@ CodeCraft.Forms = new (function () {
 
 
 
-                    // Seleciona o objeto alvo para o set do valor
+
+                    // O looping abaixo vai, à cada campo do formulário, remontando o objeto final
+                    // que está sendo representado seguindo as informações encontradas nas notações
+                    // "fcon" indicadas nos atributos "data-ccw-fcon-object".
+                    //
+                    // Quando i=0 apenas inicia a um novo objeto com o nome do modelo em si.
+                    // Demais posições indicam objetos filhos do modelo principal.
                     for (var i = 0; i < split.length - 1; i++) {
                         var data = _nttTools._unMake(split[i]);
                         var newObject = { __new: data.New, Id: data.Id };
@@ -1192,16 +1219,24 @@ CodeCraft.Forms = new (function () {
                         var arrObj = null;
 
 
-                        // Para o primeiro objeto...
+
+
+                        // Para a primeira posição da notação, inicia um objeto com o nome
+                        // do modelo de dados que está sendo representado pelo formulário.
                         if (i == 0) {
                             if (parentModel[n] === undefined) {
                                 parentModel[n] = newObject;
                             }
                         }
-                        // Para todos os demais níveis
+                        // Para as demais posições, trata a inicialização das propriedades
+                        // que são objetos filhos do modelo principal.
                         else {
+
+                            // Resgata o complextype da posição atual
+                            // e atualiza o nome do modelo usado no momento.
                             cType = _nttTools._getComplexType(lastModelName, n);
                             lastModelName = cType.RefType;
+
 
 
                             // Se o objeto deste nível não foi setado... seta-o
@@ -1209,26 +1244,45 @@ CodeCraft.Forms = new (function () {
                                 parentModel[n] = (cType.Type.Name == 'Object[]') ? [newObject] : newObject;
                             }
 
+
                             // Se for uma coleção de um tipo de objetos, verifica se o objeto
-                            // com o Id escolhido já foi setado...
+                            // com o Id encontrado já foi setado...
                             if (cType.Type.Name == 'Object[]') {
+
+
+                                // Para cada objeto na coleção...
                                 for (var ii in parentModel[n]) {
-                                    if (parentModel[n][ii].Id == data.Id) {
+                                    // SE o Id de um dos objetos já setados é compativel com o Id/Indice encontrado E
+                                    // Ambas propriedades "New" indicam a mesma posição, então
+                                    // trata-se de um mesmo objeto.
+                                    // Neste caso, seleciona-o
+                                    if (parentModel[n][ii].Id == data.Id &&
+                                        parentModel[n][ii].__new == data.New) {
                                         arrObj = parentModel[n][ii];
                                         break;
                                     }
                                 }
 
-                                // Se nenhum objeto possui o Id indicado, é um novo objeto
+
+                                // Se chegar aqui e nenhum objeto tiver sido selecionado entre a coleção dos existêntes...
+                                // é sinal de que trata-se de um novo objeto, neste caso, cria-o
                                 if (arrObj == null) {
                                     parentModel[n].push(newObject);
                                     arrObj = parentModel[n][parentModel[n].length - 1];
+
+                                    // Se o objeto está marcado como NOVO...
+                                    if (newObject.__new) {
+                                        _public.HasNewObjects = true;
+                                    }
                                 }
                             }
 
                         }
 
-                        // Seleciona o novo objeto para ter seu valor setado
+
+
+
+                        // Seleciona o objeto pai do atributo que o campo está representando.
                         parentModel = (arrObj == null) ? parentModel[n] : arrObj;
                     }
 
@@ -1236,8 +1290,16 @@ CodeCraft.Forms = new (function () {
 
 
 
+
+
+                    // Uma vez que o objeto pai foi identificado no looping acima,
+                    // a propriedade que está sendo tratada terá seu valor setado conforme
+                    // o tipo de seu campo e as regras definidas em seu complexType.
+
+
+                    // Caso o campo seja do tipo radiobutton
                     if (ft.IsRadio) {
-                        // SE o valor para esta propriedade ainda não foi setada...
+                        // Apenas SE o valor para esta propriedade ainda não foi setada...
                         if (parentModel[attr] === undefined) {
                             var rName = f.getAttribute('name');
                             var rVal = null;
@@ -1324,7 +1386,7 @@ CodeCraft.Forms = new (function () {
             __rewriteData(returnData);
 
             // Se for para preparar o objeto para ser enviado...
-            if(stringfy !== undefined && stringfy == true) {
+            if (stringfy !== undefined && stringfy == true) {
                 returnData = JSON.stringify(returnData);
             }
             return (isOk && hasValue) ? returnData : null;
