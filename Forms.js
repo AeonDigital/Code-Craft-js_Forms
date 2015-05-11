@@ -58,21 +58,24 @@ CodeCraft.Forms = new (function () {
 
     Atributos especiais
     data-ccw-fcon-object           :        Este atributo tem como objetivo indicar qual objeto "ComplexType" controla
-    a validação e formatação do campo alem de informar.
-    Também informa qual "Id" dos respectivos objetos está sendo apresentado.
+                                            a validação e formatação do campo alem de informar.
+                                            Também informa qual "Id" dos respectivos objetos está sendo apresentado.
+
     Ex : 
     Suponha as seguintes tabelas e propriedades
 
-    Tabelas : 
-    Client = {
-    Id : null,
-    Name : 'String',
-    Phone : 'Telephone[]'
+    Tabelas : {
+        Client : {
+            Id : null,
+            Name : 'String',
+            Phone : 'Telephone[]'
+        },
+            Telephone : {
+            Id : null,
+            Number : 'String'
+        }
     };
-    Telephone = {
-    Id : null,
-    Number : 'String'
-    };
+
 
     Um campo com o atributo [data-ccw-fcon-object="Client[N0].Name"]
     irá fazer uma conexão com a propriedade "Name" da tabela "Client".
@@ -93,26 +96,26 @@ CodeCraft.Forms = new (function () {
 
 
     <form action="index.html" method="post" novalidate="novalidate">
-    <div>
-    <label  for="ViewForm[N0].FullName">Nome</label>
-    <input  type="text"
-    title="Nome"
-    data-ccw-fcon-object="ViewForm[N0].FullName" />
-    </div>
+        <div>
+            <label  for="ViewForm[N0].FullName">Nome</label>
+            <input  type="text"
+                    title="Nome"
+                    data-ccw-fcon-object="ViewForm[N0].FullName" />
+        </div>
 
-    <div>
-    <label  for="ViewForm[N0].Email">Email</label>
-    <input  type="text" 
-    title="Email"
-    data-ccw-fcon-object="ViewForm[N0].Email" />
-    </div>
+        <div>
+            <label  for="ViewForm[N0].Email">Email</label>
+            <input  type="text" 
+                    title="Email"
+                    data-ccw-fcon-object="ViewForm[N0].Email" />
+        </div>
 
-    <div>
-    <label  for="ViewForm[N0].Mensagem">Mensagem</label>
-    <input  type="text" 
-    title="Mensagem"
-    data-ccw-fcon-object="ViewForm[N0].Mensagem" />
-    </div>
+        <div>
+            <label  for="ViewForm[N0].Mensagem">Mensagem</label>
+            <input  type="text" 
+                    title="Mensagem"
+                    data-ccw-fcon-object="ViewForm[N0].Mensagem" />
+        </div>
     </form>
 
 
@@ -123,9 +126,9 @@ CodeCraft.Forms = new (function () {
 
 
     CodeCraft.Forms.AddNewCollection('ViewForm', [
-    CodeCraft.Forms.CreateFormType('FullName', 'String', 64, null, null, null, false, null, null),
-    CodeCraft.Forms.CreateFormType('Email', 'String', null, null, null, null, false, null, String.Pattern.World.Email),
-    CodeCraft.Forms.CreateFormType('Mensagem', 'String', null, null, null, null, false, null, null)
+        CodeCraft.Forms.CreateFormType('FullName', 'String', 64, null, null, null, false, null, null),
+        CodeCraft.Forms.CreateFormType('Email', 'String', null, null, null, null, false, null, String.Pattern.World.Email),
+        CodeCraft.Forms.CreateFormType('Mensagem', 'String', null, null, null, null, false, null, null)
     ]);
 
     
@@ -193,30 +196,6 @@ CodeCraft.Forms = new (function () {
 
 
     /**
-    * Atalho para "CodeCraft.Widget.Factory".
-    *
-    * @type {Object}
-    */
-    var _factory = null;
-
-
-
-
-
-    /**
-    * Indica quando os objetos factories estão devidamente iniciados
-    * abrindo permissão para alguns eventos internos.
-    *
-    * @type {Boolean}
-    */
-    var _hasInityFactory = false;
-
-
-
-
-
-
-    /**
     * Tipos de erros para a validação de campos de formulários.
     *
     * @memberof Forms
@@ -273,7 +252,7 @@ CodeCraft.Forms = new (function () {
         /**
         * Algum valor deve ser selecionado.
         *
-        * @memberof ValidateErrorLabels
+        * @memberof ValidateError
         */
         ValueNotSelected: 'ValueNotSelected'
     };
@@ -402,7 +381,6 @@ CodeCraft.Forms = new (function () {
         * @function _getValueFromAutoFill
         *
         * @param {Node}                         field                       Campo que se deseja retornar o valor.
-        * @param {String}                       ntt                         Notação usada para identificar o campo/valor a ser resgatado.
         * @param {ComplexType}                  cType                       Objeto ComplexType do campo que será setado.
         *
         * @return {?String}
@@ -521,82 +499,6 @@ CodeCraft.Forms = new (function () {
 
 
     /**
-    * Objeto que permite o uso integrado de CodeCraft.Form com o CodeCraft.Widget.Factory.
-    */
-    var _factoryTools = {
-        /**
-        * Identifica o node passado é filho de algum modelo de alguma fábrica.
-        *
-        * @private
-        *
-        * @paran {Node}                 n                       Elemento que se deseja testar.
-        *
-        * @return {Boolean}
-        */
-        IsChildOfModel: function (n) {
-            return (_factory !== null && _factory.IsChildOfModel(n));
-        },
-        /**
-        * Altera os atributos do elemento alvo, removendo a marcação [M] pelo Indice indicado.
-        *
-        * @param {Node}                         e                               Node do elemento.
-        * @param {String[]}                     attrs                           Array com Nome dos atributos a serem alterados.
-        * @param {Integer}                      id                              Indice a ser utilizado.
-        */
-        ChangeAttrs: function (e, attrs, id) {
-            for (var it in attrs) {
-                var a = attrs[it];
-
-                if (e.hasAttribute(a)) {
-                    e.setAttribute(a, e.getAttribute(a).replace('[M]', id));
-                }
-            }
-        },
-
-
-
-
-        /**
-        * Eventos para os objetos de fábricas de formulários
-        */
-        FactoryEvents: {
-            /**
-            * Imediatamente após adicionar uma nova Instância no DOM, efetua estes sets.
-            *
-            * @function onAddInstance
-            *
-            * @param {FactoryObject}            f                       Objeto que representa a fábrica relacionada ao evento disparado.
-            * @param {Node}                     inst                    Node da instância que foi alterada durante este evento.
-            */
-            onAddInstance: function (f, inst) {
-                // Resgata todos os elementos de formulário dentro da nova Instância
-                var tgtElem = _dom.Get('input, textarea, select, label, button, datalist', inst);
-                var tgtAttrs = ['for', 'id', 'name', 'data-ccw-fcon-object'];
-                var id = parseInt(inst.getAttribute('data-ccw-factory-item-id'), 10);
-
-
-                for (var it in tgtElem) {
-                    _factoryTools.ChangeAttrs(tgtElem[it], tgtAttrs, id);
-                }
-
-
-                if (_hasInityFactory) {
-                    _public.ConnectFields(inst);
-                }
-            }
-        }
-    };
-
-
-
-
-
-
-
-
-
-
-    /**
     * Resgata o nome pelo qual o campo é chamado.
     * 
     * @function _getFieldName
@@ -635,6 +537,28 @@ CodeCraft.Forms = new (function () {
 
 
 
+    /**
+    * Identifica o node passado é filho de algum modelo de alguma fábrica.
+    *
+    * @private
+    *
+    * @paran {Node}                 n                       Elemento que se deseja testar.
+    *
+    * @return {Boolean}
+    */
+    var _isChildOfModel = function (n) {
+        return (CodeCraft.Widget.Factory !== null && CodeCraft.Widget.Factory.IsChildOfModel(n));
+    };
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -651,7 +575,7 @@ CodeCraft.Forms = new (function () {
     var _public = this.Control = {
         /**
         * Objeto que armazena os dados que serão automaticamente preenchidos nos campos
-        * conectados de um formulário
+        * conectados de um formulário.
         *
         * @type {JSON}
         */
@@ -669,6 +593,12 @@ CodeCraft.Forms = new (function () {
         * @type {JSON}
         */
         HasNewObjects: false,
+
+
+
+
+
+
 
 
 
@@ -752,6 +682,47 @@ CodeCraft.Forms = new (function () {
 
 
         /**
+        * Prepara todos os campos <input> do formulário alvo para dispararem o evento indicado
+        * ao pressionar o botão "Enter".
+        * 
+        * @function SetActionOnEnter
+        *
+        * @memberof Forms
+        *
+        * @param {Node}                     f                               Elemento "form" alvo.
+        * @param {Function}                 ev                              Evento que será disparado.
+        */
+        SetActionOnEnter: function (f, ev) {
+            // Evento que será adicionado nos campos encontrados
+            var __event_OnEnter = function (e) { if (e.keyCode == 13) { ev(e); } };
+
+
+            var flds = _dom.Get('input', f);
+            for (var it in flds) {
+                var t = flds[it].type;
+
+                switch (t) {
+                    case 'datetime-local': case 'datetime': case 'date':
+                    case 'month': case 'week': case 'time': case 'number':
+                    case 'range': case 'email': case 'color': case 'tel':
+                    case 'url': case 'text': case 'password': case 'search':
+
+                        _dom.SetEvent(flds[it], 'keyup', __event_OnEnter);
+                        break;
+                }
+            }
+        },
+
+
+
+
+
+
+
+
+
+
+        /**
         * Cria um objeto "ComplexType" sem precisar informar dados desnecessários para campos
         * comuns de formulário.
         * 
@@ -777,6 +748,7 @@ CodeCraft.Forms = new (function () {
             return _ct.CreateNewType(parName, parType, parLength, parMin, parMax, parRefType,
                                             true, true, parAllowEmpty, false, false, parDefault, parFormatSet);
         },
+
 
 
 
@@ -817,24 +789,6 @@ CodeCraft.Forms = new (function () {
 
 
         /**
-        * Inicia todas as definições especiais para os formulários de uma view.
-        * 
-        * @function StartForms
-        *
-        * @memberof Forms
-        */
-        StartForms: function () {
-            _public.CheckFactoryInstances();
-
-
-            // Conecta os campos marcados
-            _public.ConnectFields();
-        },
-
-
-
-
-        /**
         * Conecta os campos marcados com seus respectivos objetos "ComplexType".
         * 
         * @function ConnectFields
@@ -853,7 +807,7 @@ CodeCraft.Forms = new (function () {
 
 
                 // apenas se for um objeto válido E que não seja parte de um modelo definido...
-                if (f.hasAttribute('data-ccw-fcon-object') && !_factoryTools.IsChildOfModel(f)) {
+                if (f.hasAttribute('data-ccw-fcon-object') && !_isChildOfModel(f)) {
                     var fcon = f.getAttribute('data-ccw-fcon-object');
                     var cType = _nttTools._getComplexTypeByNotation(fcon);
 
@@ -1055,7 +1009,7 @@ CodeCraft.Forms = new (function () {
                                 }
                                 else {
                                     switch (cType.Type.Name) {
-                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
                                         case 'String':
                                             // Havendo um formatador, executa-o
                                             val = (ss != null && ss.Format != null) ? ss.Format(val) : val;
@@ -1068,7 +1022,7 @@ CodeCraft.Forms = new (function () {
 
                                             break;
 
-                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
                                         case 'Date':
                                         case 'Byte':
                                         case 'Short':
@@ -1134,7 +1088,7 @@ CodeCraft.Forms = new (function () {
                 var f = tgtInputs[it];
 
                 // Apenas se não for um item de um modelo
-                if (!_factoryTools.IsChildOfModel(f)) {
+                if (!_isChildOfModel(f)) {
                     var r = fc.CheckAndFormatField(f, true, false);
 
                     if (r !== true) {
@@ -1194,7 +1148,7 @@ CodeCraft.Forms = new (function () {
 
                 // Se for um campo que está conectado a um complexType e que
                 // não seja parte de um modelo de uma factory
-                if (f.hasAttribute('data-ccw-fcon-object') && !_factoryTools.IsChildOfModel(f)) {
+                if (f.hasAttribute('data-ccw-fcon-object') && !_isChildOfModel(f)) {
                     var cType = null;
                     var ft = _bt.GetFieldType(f);
                     var fcon = f.getAttribute('data-ccw-fcon-object');
@@ -1390,302 +1344,10 @@ CodeCraft.Forms = new (function () {
                 returnData = JSON.stringify(returnData);
             }
             return (isOk && hasValue) ? returnData : null;
-        },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /**
-        * Prepara todos os campos <input> do formulário alvo para dispararem o evento indicado
-        * ao pressionar o botão "Enter".
-        * 
-        * @function SetActionOnEnter
-        *
-        * @memberof Forms
-        *
-        * @param {Node}                     f                               Elemento "form" alvo.
-        * @param {Function}                 ev                              Evento que será disparado.
-        */
-        SetActionOnEnter: function (f, ev) {
-            // Evento que será adicionado nos campos encontrados
-            var __event_OnEnter = function (e) { if (e.keyCode == 13) { ev(e); } };
-
-
-            var flds = _dom.Get('input', f);
-            for (var it in flds) {
-                var t = flds[it].type;
-
-                switch (t) {
-                    case 'datetime-local': case 'datetime': case 'date':
-                    case 'month': case 'week': case 'time': case 'number':
-                    case 'range': case 'email': case 'color': case 'tel':
-                    case 'url': case 'text': case 'password': case 'search':
-
-                        _dom.SetEvent(flds[it], 'keyup', __event_OnEnter);
-                        break;
-                }
-            }
-        },
-
-
-
-
-
-        /**
-        * Se o objeto "CodeCraft.Widget.Factory" estiver presente, adiciona em sua 
-        * lista de eventos os eventos as configurações definidas em "_factoryTools.FactoryEvents"
-        * Isto permite conectar os campos internos dos objetos gerados pela "factory".
-        * No node da factory alvo, use o atributo [data-ccw-factory-events="CodeCraftFactoryEvents"]
-        * 
-        * @function ConnectEventsForWidgetFactory
-        *
-        * @memberof Forms
-        */
-        ConnectEventsForWidgetFactory: function () {
-            // Efetua integração com "CodeCraft.Widget.Factory" 
-            if (typeof (CodeCraft.Widget) !== 'undefined' && typeof (CodeCraft.Widget.Factory) !== 'undefined') {
-                _factory = CodeCraft.Widget.Factory;
-
-                // Associa os eventos para as fábricas de formulários
-                _factory.FactoryEvents['CodeCraftFactoryEvents'] = _factoryTools.FactoryEvents;
-            }
-        },
-
-
-
-
-
-        /**
-        * Verifica compatibilidade entre o objeto de dados e o número 
-        * de instâncias das factories relacionadas
-        * 
-        * @function CheckFactoryInstances
-        *
-        * @memberof Forms
-        */
-        CheckFactoryInstances: function () {
-            // Apenas se há set de dados
-            if (CodeCraft.Forms.AutoFillData != null) {
-                var afd = CodeCraft.Forms.AutoFillData;
-
-
-
-                /**
-                * Verifica a consistência entre o número de instâncias no DOM
-                * e o número de objetos que devem ser representados.
-                *
-                * @param {String}           form                Id do formulário que está sendo conferido.
-                * @param {Object}           odata               Objeto que está sendo verificado.
-                * @param {String}           iname               Nome base da instância.
-                * @param {Integer}          fnumber             Número identificador da fábrica.
-                */
-                var __checkInstancesOfFactory = function (form, odata, iname, fnumber) {
-
-
-                    // Resgata todas as factories do formulário alvo
-                    var facts = _dom.Get('#' + form + ' [data-ccw-factory]');
-                    if (facts == null) { facts = []; }
-                    else {
-                        var nf = [];
-
-                        // Mantem apenas as factories que não são filhos de models
-                        for (var it in facts) {
-                            if (!CodeCraft.Widget.Factory.IsChildOfModel(facts[it])) {
-                                nf.push(facts[it]);
-                            }
-                        }
-
-                        facts = nf;
-                    }
-
-
-
-
-                    // Apenas se houverem factories no formulário alvo...
-                    if (facts.length > 0) {
-                        var checkAfter = [];
-                        var checkAfterName = [];
-                        var checkAfterNumber = [];
-
-                        var checkArray = [];
-                        var checkArrayName = [];
-
-
-
-                        // para cada propriedade do objeto atual...
-                        for (var prop in odata) {
-                            var value = odata[prop];
-                            var childName = iname + '_' + prop;
-
-
-                            // Sendo um JSON, seleciona-o para ser verificado apos a verificação dos array
-                            if (_bt.IsJSON(value)) {
-                                checkAfter.push(value);
-                                checkAfterName.push(childName);
-                                checkAfterNumber.push(fnumber);
-                            }
-                            else if (_bt.IsArray(value) && value.length > 0) {
-                                checkArray.push(value);
-                                checkArrayName.push(childName);
-                            }
-                        }
-
-
-
-                        // Efetua a verificação dos objetos que são Arrays, ou seja,
-                        // provavelmente são representados por fábricas no DOM
-                        for (var it in checkArray) {
-                            var oArr = checkArray[it];
-                            var childName = checkArrayName[it];
-
-
-                            var tgtFact = null;
-                            var fname = null;
-                            var index = null;
-
-
-
-                            // Tenta identificar a factory alvo 
-                            for (var it in facts) {
-                                var fac = facts[it];
-
-                                fname = fac.getAttribute('data-ccw-factory');
-
-
-                                // SE for a factory que se está procurando...
-                                if (fname == childName + '_' + fnumber) {
-                                    tgtFact = fac;
-                                    break;
-                                }
-                            }
-
-
-
-                            // Encontrando a factory responsável por representar o 
-                            // tipo de objeto que o array armazena...
-                            if (tgtFact != null) {
-
-                                // Verifica se cada objeto possui uma instância correspondente
-                                for (var ii in oArr) {
-                                    var inst = _dom.Get('#' + form + ' [data-ccw-factory="' + fname + '"] > [data-ccw-factory-item][data-ccw-factory-item-index="' + ii + '"]');
-
-                                    if (inst == null) {
-                                        var btn = _dom.Get('[data-ccw-factory-btn-add="' + fname + '"]')[0];
-                                        CodeCraft.Widget.Factory.ControlInstance(btn);
-                                    }
-                                }
-                            }
-
-
-
-                            // Adiciona os objetos do array na lista de verificação posterior
-                            for (var ii in oArr) {
-                                checkAfter.push(oArr[ii]);
-                                checkAfterName.push(childName);
-                                checkAfterNumber.push(parseInt(ii, 10) + 1);
-                            }
-                        }
-
-
-
-
-                        // Verifica os objetos que não são array e estão no mesmo nível das demais propriedades
-                        for (var it in checkAfter) {
-                            __checkInstancesOfFactory(form, checkAfter[it], checkAfterName[it], checkAfterNumber[it]);
-                        }
-                    }
-                };
-
-
-
-                /**
-                * Seta corretamente os campos do formulário corrigindo suas marcações de Id.
-                *
-                * @param {Object}           odata               Objeto que está sendo verificado.
-                * @param {Integer}          fnumber             Número identificador da fábrica.
-                * @param {String}           baseId              Nome base do Id dos campos que serão alterados.
-                * @param {String}           newId               Nome base da instância.
-                */
-                var __resetIDFields = function (odata, fnumber, baseId, newId) {
-
-                    var oldFieldId = baseId + '[N' + fnumber + '].';
-                    var newFieldId = newId + '[' + odata['Id'] + '].';
-
-                    for (var prop in odata) {
-                        var value = odata[prop];
-                        var getFieldId = oldFieldId + prop;
-                        var setFieldId = newFieldId + prop;
-
-
-                        if (_bt.IsJSON(value)) {
-                            __resetIDFields(value, fnumber, getFieldId, setFieldId);
-                        }
-                        else if (_bt.IsArray(value) && value.length > 0) {
-                            for (var it in value) {
-                                __resetIDFields(value[it], parseInt(it) + 1, getFieldId, setFieldId);
-                            }
-                        }
-                        else {
-                            var fld = _dom.Get('[data-ccw-fcon-object="' + getFieldId + '"]');
-                            if (fld != null) {
-                                fld[0].setAttribute('data-ccw-fcon-object', setFieldId);
-
-
-                                var ft = _bt.GetFieldType(fld[0]);
-                                if (!ft.IsRadio) {
-                                    fld[0].setAttribute('id', setFieldId);
-                                }
-                                fld[0].setAttribute('name', setFieldId);
-
-
-                                var lbl = _dom.Get('label[for="' + getFieldId + '"]');
-                                if (lbl != null) {
-                                    lbl[0].setAttribute('for', setFieldId);
-                                }
-                            }
-                        }
-                    }
-
-                };
-
-
-
-
-
-                // para cada formulário que está configurado com um objeto de dados...
-                for (var fid in afd) {
-
-                    // Se o formulário for encontrado no DOM...
-                    var form = _dom.Get('#' + fid);
-                    if (form != null) {
-                        var focus = afd[fid];
-                        var iname = Object.keys(focus)[0];
-
-
-                        __checkInstancesOfFactory(fid, focus[iname], iname, 1);
-                        __resetIDFields(focus[iname], 1, iname, iname);
-                    }
-                }
-
-
-                _hasInityFactory = true;
-            }
-
         }
+
+
+
     };
 
 
