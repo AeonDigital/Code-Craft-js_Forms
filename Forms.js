@@ -58,22 +58,22 @@ CodeCraft.Forms = new (function () {
 
     Atributos especiais
     data-ccw-fcon-object           :        Este atributo tem como objetivo indicar qual objeto "ComplexType" controla
-                                            a validação e formatação do campo alem de informar.
-                                            Também informa qual "Id" dos respectivos objetos está sendo apresentado.
+    a validação e formatação do campo alem de informar.
+    Também informa qual "Id" dos respectivos objetos está sendo apresentado.
 
     Ex : 
     Suponha as seguintes tabelas e propriedades
 
     Tabelas : {
-        Client : {
-            Id : null,
-            Name : 'String',
-            Phone : 'Telephone[]'
-        },
-            Telephone : {
-            Id : null,
-            Number : 'String'
-        }
+    Client : {
+    Id : null,
+    Name : 'String',
+    Phone : 'Telephone[]'
+    },
+    Telephone : {
+    Id : null,
+    Number : 'String'
+    }
     };
 
 
@@ -96,26 +96,26 @@ CodeCraft.Forms = new (function () {
 
 
     <form action="index.html" method="post" novalidate="novalidate">
-        <div>
-            <label  for="ViewForm[N0].FullName">Nome</label>
-            <input  type="text"
-                    title="Nome"
-                    data-ccw-fcon-object="ViewForm[N0].FullName" />
-        </div>
+    <div>
+    <label  for="ViewForm[N0].FullName">Nome</label>
+    <input  type="text"
+    title="Nome"
+    data-ccw-fcon-object="ViewForm[N0].FullName" />
+    </div>
 
-        <div>
-            <label  for="ViewForm[N0].Email">Email</label>
-            <input  type="text" 
-                    title="Email"
-                    data-ccw-fcon-object="ViewForm[N0].Email" />
-        </div>
+    <div>
+    <label  for="ViewForm[N0].Email">Email</label>
+    <input  type="text" 
+    title="Email"
+    data-ccw-fcon-object="ViewForm[N0].Email" />
+    </div>
 
-        <div>
-            <label  for="ViewForm[N0].Mensagem">Mensagem</label>
-            <input  type="text" 
-                    title="Mensagem"
-                    data-ccw-fcon-object="ViewForm[N0].Mensagem" />
-        </div>
+    <div>
+    <label  for="ViewForm[N0].Mensagem">Mensagem</label>
+    <input  type="text" 
+    title="Mensagem"
+    data-ccw-fcon-object="ViewForm[N0].Mensagem" />
+    </div>
     </form>
 
 
@@ -126,9 +126,9 @@ CodeCraft.Forms = new (function () {
 
 
     CodeCraft.Forms.AddNewCollection('ViewForm', [
-        CodeCraft.Forms.CreateFormType('FullName', 'String', 64, null, null, null, false, null, null),
-        CodeCraft.Forms.CreateFormType('Email', 'String', null, null, null, null, false, null, String.Pattern.World.Email),
-        CodeCraft.Forms.CreateFormType('Mensagem', 'String', null, null, null, null, false, null, null)
+    CodeCraft.Forms.CreateFormType('FullName', 'String', 64, null, null, null, false, null, null),
+    CodeCraft.Forms.CreateFormType('Email', 'String', null, null, null, null, false, null, String.Pattern.World.Email),
+    CodeCraft.Forms.CreateFormType('Mensagem', 'String', null, null, null, null, false, null, null)
     ]);
 
     
@@ -868,6 +868,14 @@ CodeCraft.Forms = new (function () {
                             if (cType.AllowSet === false) { f.setAttribute('disabled', 'disabled'); f.setAttribute('data-ccw-fcon-validate', 'false'); }
                             if (cType.AllowNull === false && !f.hasAttribute('required')) { f.setAttribute('required', 'required'); }
 
+
+                            // Se o campo permite insert E está marcado como ReadOnly verifica se o valor atual está definido...
+                            if (cType.AllowSet === true && cType.ReadOnly === true && _bt.IsNotNullValue(f.value)) {
+                                if (ft.IsSelect) { f.setAttribute('disabled', 'disabled'); }
+                                else { f.setAttribute('readonly', 'readonly'); }
+                            }
+
+
                             // Sets para Campos Comuns ou TextArea
                             if (!ft.IsSelect) {
                                 if (cType.Length != null) { f.setAttribute('maxlength', cType.Length); }
@@ -878,12 +886,6 @@ CodeCraft.Forms = new (function () {
                                 if (cType.Max != null) {
                                     var vM = (cType.Type.Name != 'Date') ? cType.Max : cType.Type.ParseToString(cType.Max);
                                     f.setAttribute('max', vM);
-                                }
-
-                                // Se o campo permite insert E está marcado como ReadOnly
-                                // verifica se o valor atual está definido...
-                                if (cType.AllowSet === true && cType.ReadOnly === true && _bt.IsNotNullValue(f.value)) {
-                                    f.setAttribute('readonly', 'readonly');
                                 }
                             }
 
@@ -958,6 +960,7 @@ CodeCraft.Forms = new (function () {
             else {
                 var cType = _nttTools._getComplexTypeByNotation(o.getAttribute('data-ccw-fcon-object'));
                 if (cType == null) {
+                    console.log(o.getAttribute('data-ccw-fcon-object'));
                     isValid = (r === true) ? false : ValidateError.ComplexTypeDoesNotExist;
                 }
                 else {
@@ -1009,7 +1012,7 @@ CodeCraft.Forms = new (function () {
                                 }
                                 else {
                                     switch (cType.Type.Name) {
-                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
                                         case 'String':
                                             // Havendo um formatador, executa-o
                                             val = (ss != null && ss.Format != null) ? ss.Format(val) : val;
@@ -1022,7 +1025,7 @@ CodeCraft.Forms = new (function () {
 
                                             break;
 
-                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
                                         case 'Date':
                                         case 'Byte':
                                         case 'Short':
