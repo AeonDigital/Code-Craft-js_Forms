@@ -871,7 +871,7 @@ CodeCraft.Forms = new (function () {
 
                             // Se o campo permite insert E está marcado como ReadOnly verifica se o valor atual está definido...
                             if (cType.AllowSet === true && cType.ReadOnly === true && _bt.IsNotNullValue(f.value)) {
-                                if (ft.IsSelect) { f.setAttribute('disabled', 'disabled'); }
+                                if (ft.IsSelect) { f.setAttribute('data-ccw-fcon-disabled', ''); }
                                 else { f.setAttribute('readonly', 'readonly'); }
                             }
 
