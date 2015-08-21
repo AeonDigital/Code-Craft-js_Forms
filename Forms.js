@@ -915,6 +915,22 @@ CodeCraft.Forms = new (function () {
                             var fc = CodeCraft.Forms;
                             var ev = (ft.IsField || ft.IsTextArea) ? 'keyup' : 'change';
 
+
+                            // Tipos numéricos são formatados após o blur do campo
+                            switch (cType.Type.Name) {
+                                case 'Date':
+                                case 'Byte':
+                                case 'Short':
+                                case 'Integer':
+                                case 'Long':
+                                case 'Float':
+                                case 'Double':
+                                case 'Decimal':
+                                    ev = 'change';
+                                    break;
+                            }
+
+
                             _dom.SetEvent(f, ev, fc.CheckAndFormatField);
                             fc.CheckAndFormatField(f, false);
                         }
@@ -1033,6 +1049,7 @@ CodeCraft.Forms = new (function () {
                                         case 'Long':
                                         case 'Float':
                                         case 'Double':
+                                        case 'Decimal':
                                             if (val < cType.Min || val > cType.Max) {
                                                 isValid = (r === true) ? false : ValidateError.ValueOutOfRange;
                                             }
