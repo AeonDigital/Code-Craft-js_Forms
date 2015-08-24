@@ -468,7 +468,7 @@ CodeCraft.Forms = new (function () {
 
 
                             // Altera valor conforme formado de data
-                            if (cType.Type.Name === 'Date') {
+                            if (cType.Type.Name === 'Date' && _bt.IsNotNullValue(rVal)) {
                                 rVal = new Date(rVal);
                                 var use = (String.Pattern != undefined) ? String.Pattern.World.Dates.DateTime : null;
                                 use = (cType.FormatSet != null && cType.FormatSet.Format != null) ? cType.FormatSet : use;
