@@ -863,6 +863,9 @@ CodeCraft.Forms = new (function () {
                         // Marca todos os checkbox como não validáveis
                         if (ft.IsCheckBox) {
                             f.setAttribute('data-ccw-fcon-validate', 'false');
+                            if (cType.Default === true) {
+                                f.setAttribute('checked', 'checked');
+                            }
                         }
                         else if (ft.IsField || ft.IsTextArea || ft.IsSelect) {
                             if (cType.AllowSet === false) { f.setAttribute('disabled', 'disabled'); f.setAttribute('data-ccw-fcon-validate', 'false'); }
@@ -1028,7 +1031,7 @@ CodeCraft.Forms = new (function () {
                                 }
                                 else {
                                     switch (cType.Type.Name) {
-                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
                                         case 'String':
                                             // Havendo um formatador, executa-o
                                             val = (ss != null && ss.Format != null) ? ss.Format(val) : val;
@@ -1041,7 +1044,7 @@ CodeCraft.Forms = new (function () {
 
                                             break;
 
-                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
                                         case 'Date':
                                         case 'Byte':
                                         case 'Short':
