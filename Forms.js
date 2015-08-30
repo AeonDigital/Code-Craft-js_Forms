@@ -704,8 +704,8 @@ CodeCraft.Forms = new (function () {
                 switch (t) {
                     case 'datetime-local': case 'datetime': case 'date':
                     case 'month': case 'week': case 'time': case 'number':
-                    case 'range': case 'email': case 'color': case 'tel':
-                    case 'url': case 'text': case 'password': case 'search':
+                    case 'email': case 'color': case 'tel': case 'url': 
+                    case 'text': case 'password': case 'search':
 
                         _dom.SetEvent(flds[it], 'keyup', __event_OnEnter);
                         break;
