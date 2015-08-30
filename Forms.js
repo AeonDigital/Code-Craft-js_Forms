@@ -934,8 +934,10 @@ CodeCraft.Forms = new (function () {
                             }
 
 
-                            _dom.SetEvent(f, ev, fc.CheckAndFormatField);
-                            fc.CheckAndFormatField(f, false);
+                            if (f.type != 'range') {
+                                _dom.SetEvent(f, ev, fc.CheckAndFormatField);
+                                fc.CheckAndFormatField(f, false);
+                            }
                         }
                     }
 
@@ -1031,7 +1033,7 @@ CodeCraft.Forms = new (function () {
                                 }
                                 else {
                                     switch (cType.Type.Name) {
-                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
                                         case 'String':
                                             // Havendo um formatador, executa-o
                                             val = (ss != null && ss.Format != null) ? ss.Format(val) : val;
@@ -1044,7 +1046,7 @@ CodeCraft.Forms = new (function () {
 
                                             break;
 
-                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
                                         case 'Date':
                                         case 'Byte':
                                         case 'Short':
