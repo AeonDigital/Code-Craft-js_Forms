@@ -1012,6 +1012,7 @@ CodeCraft.Forms = new (function () {
 
                             // Verifica se a string é válida dentro das especificações do SuperType
                             isValid = (ss != null && _bt.IsNotNullValue(ss.Check)) ? ss.Check(val) : true;
+                            isValid = (ss != null && _bt.IsNotNullValue(ss.ExtraCheck)) ? ss.ExtraCheck(val) : isValid;
 
 
                             if (!isValid) {
