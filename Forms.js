@@ -704,7 +704,7 @@ CodeCraft.Forms = new (function () {
                 switch (t) {
                     case 'datetime-local': case 'datetime': case 'date':
                     case 'month': case 'week': case 'time': case 'number':
-                    case 'email': case 'color': case 'tel': case 'url': 
+                    case 'email': case 'color': case 'tel': case 'url':
                     case 'text': case 'password': case 'search':
 
                         _dom.SetEvent(flds[it], 'keyup', __event_OnEnter);
@@ -723,7 +723,49 @@ CodeCraft.Forms = new (function () {
 
 
         /**
-        * Cria um objeto "ComplexType" sem precisar informar dados desnecessários para campos
+        * Adiciona ou remove a propriedade "disabled" dos campos marcados com a propriedade "data-ccw-fcon-disabled"
+        * esta propriedade é adicionada em campos que necessitam de uma verificação do contexto para serem
+        * efetivamente desabilitados ou habilitados.
+        * 
+        * @function ChangeFconDisabledFields
+        *
+        * @memberof Forms
+        *
+        * @param {String}                   action                          Ação que deverá ser realizada [enable|e|disable|d].
+        * @param {Node}                     [form]                          Node do formulário onde os campos serão alterados.
+        *                                                                   Se não for informado, pesquisa em todo o DOM
+        */
+        ChangeFconDisabledFields: function (action, form) {
+            form = (form == undefined) ? document.body : form;
+            var tgts = _dom.Get('[data-ccw-fcon-disabled]', form);
+
+            switch (action) {
+                case 'enable':
+                case 'e':
+                    for (var it in tgts) {
+                        tgts[it].setAttribute('disabled', 'disabled')
+                    }
+                    break;
+
+                case 'disable':
+                case 'd':
+                    for (var it in tgts) {
+                        tgts[it].removeAttribute('disabled');
+                    }
+                    break;
+            }
+        },
+
+
+
+
+
+
+
+
+
+
+        /**        * Cria um objeto "ComplexType" sem precisar informar dados desnecessários para campos
         * comuns de formulário.
         * 
         * @function CreateFormType
@@ -1034,7 +1076,7 @@ CodeCraft.Forms = new (function () {
                                 }
                                 else {
                                     switch (cType.Type.Name) {
-                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
                                         case 'String':
                                             // Havendo um formatador, executa-o
                                             val = (ss != null && ss.Format != null) ? ss.Format(val) : val;
@@ -1047,7 +1089,7 @@ CodeCraft.Forms = new (function () {
 
                                             break;
 
-                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
                                         case 'Date':
                                         case 'Byte':
                                         case 'Short':
