@@ -743,14 +743,14 @@ CodeCraft.Forms = new (function () {
                 case 'enable':
                 case 'e':
                     for (var it in tgts) {
-                        tgts[it].setAttribute('disabled', 'disabled')
+                        tgts[it].removeAttribute('disabled');
                     }
                     break;
 
                 case 'disable':
                 case 'd':
                     for (var it in tgts) {
-                        tgts[it].removeAttribute('disabled');
+                        tgts[it].setAttribute('disabled', 'disabled')
                     }
                     break;
             }
@@ -1076,7 +1076,7 @@ CodeCraft.Forms = new (function () {
                                 }
                                 else {
                                     switch (cType.Type.Name) {
-                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
                                         case 'String':
                                             // Havendo um formatador, executa-o
                                             val = (ss != null && ss.Format != null) ? ss.Format(val) : val;
@@ -1089,7 +1089,7 @@ CodeCraft.Forms = new (function () {
 
                                             break;
 
-                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
                                         case 'Date':
                                         case 'Byte':
                                         case 'Short':
