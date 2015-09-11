@@ -590,9 +590,21 @@ CodeCraft.Forms = new (function () {
         * há algum objeto novo que deverá ser persistido. 
         * Um objeto novo é identificado pois não possui um Id próprio.
         *
-        * @type {JSON}
+        * @type {Boolean}
         */
         HasNewObjects: false,
+
+
+
+
+
+        /**
+        * Indica se, ao resgatar os dados de um formulário usando o método "RetrieveFormObjects"
+        * deverá remover o "TimeZone" dos valores que são "Date". 
+        *
+        * @type {Boolean}
+        */
+        RemoveTimeZone: true,
 
 
 
@@ -1076,7 +1088,7 @@ CodeCraft.Forms = new (function () {
                                 }
                                 else {
                                     switch (cType.Type.Name) {
-                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
                                         case 'String':
                                             // Havendo um formatador, executa-o
                                             val = (ss != null && ss.Format != null) ? ss.Format(val) : val;
@@ -1089,7 +1101,7 @@ CodeCraft.Forms = new (function () {
 
                                             break;
 
-                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
                                         case 'Date':
                                         case 'Byte':
                                         case 'Short':
@@ -1347,10 +1359,19 @@ CodeCraft.Forms = new (function () {
                         val = cType.Type.TryParse(val, cType.RefType);
 
 
+
                         // Se o valor setado for Vazio e este campo não permite este tipo de valor... 
                         // Ou se é um campo que não é permitido a definição de seu valor externamente...
                         if ((!_bt.IsNotNullValue(val) && !cType.AllowEmpty) || !cType.AllowSet) {
                             val = null;
+                        }
+                        else {
+                            // Sendo um objeto "Date", E,
+                            // sendo para remover o TimeZone...
+                            if (_bt.IsDate(val) && _public.RemoveTimeZone) {
+                                val = new Date(val.getTime() - (val.getTimezoneOffset() * 60 * 1000));
+                            }
+
                         }
 
 
