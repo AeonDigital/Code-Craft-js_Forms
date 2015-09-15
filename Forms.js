@@ -1004,6 +1004,65 @@ CodeCraft.Forms = new (function () {
 
 
         /**
+        * A partir do "ComplexType" definido para o campo, formata seu valor.
+        * As validações dos valores só são levadas em conta para evitar que a formatação gere uma falha.
+        * Em caso de falha de validação o campo simplesmente ficará desformatado.
+        * 
+        * @function FormatField
+        *
+        * @memberof Forms
+        *
+        * @param {Node}                     f                               Elemento que terá seu valor formatado.
+        */
+        FormatField: function (f) {
+
+            if (f.value != '') {
+                var cType = _nttTools._getComplexTypeByNotation(f.getAttribute('data-ccw-fcon-object'));
+                if (cType != null) {
+
+                    var ft = _bt.GetFieldType(f);
+                    if (!ft.IsSelect) {
+                        var val = f.value;
+                        var ss = (_bt.IsNotNullValue(cType.FormatSet)) ? cType.FormatSet : null;
+
+
+                        // Apenas se existir um formatador
+                        if (ss != null) {
+
+                            // Verifica se a string é válida dentro das especificações do SuperType
+                            var isValid = (_bt.IsNotNullValue(ss.Check)) ? ss.Check(val) : true;
+                            isValid = (_bt.IsNotNullValue(ss.ExtraCheck)) ? ss.ExtraCheck(val) : isValid;
+
+
+                            if (isValid) {
+                                // Força para que o valor retorne ao seu tipo original
+                                val = (ss.RemoveFormat != null) ? ss.RemoveFormat(val) : val;
+                                val = cType.Type.TryParse(val, cType.RefType);
+
+
+                                // Valida o valor conforme o tipo de dado da coluna,
+                                // ENUNs são testados aqui
+                                isValid = cType.Type.Validate(val, cType.RefType);
+
+
+
+                                if (isValid && ss.Format != null) {
+                                    f.value = ss.Format(val);
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+
+        },
+
+
+
+
+
+        /**
         * A partir do "ComplexType" definido para o campo, verifica se seu valor é válido.
         * No caso do valor encontrado ser válido e haver uma formatação prevista, esta será aplicada.
         * 
@@ -1023,6 +1082,7 @@ CodeCraft.Forms = new (function () {
             c = (c === undefined) ? true : c;
             r = (r === undefined) ? true : r;
 
+
             var validate = (o.hasAttribute('data-ccw-fcon-validate')) ? _bt.TryParse.ToBoolean(!o.getAttribute('data-ccw-fcon-validate')) : true;
             var isValid = false;
 
@@ -1031,6 +1091,7 @@ CodeCraft.Forms = new (function () {
             // possibilite enquadra-lo em alguma regra de validação... ignora-o
             if (!validate || !o.hasAttribute('data-ccw-fcon-object')) {
                 isValid = true;
+                _public.FormatField(o);
             }
             else {
                 var cType = _nttTools._getComplexTypeByNotation(o.getAttribute('data-ccw-fcon-object'));
@@ -1088,7 +1149,7 @@ CodeCraft.Forms = new (function () {
                                 }
                                 else {
                                     switch (cType.Type.Name) {
-                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                        // Verificação para String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
                                         case 'String':
                                             // Havendo um formatador, executa-o
                                             val = (ss != null && ss.Format != null) ? ss.Format(val) : val;
@@ -1101,7 +1162,7 @@ CodeCraft.Forms = new (function () {
 
                                             break;
 
-                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+                                        // Verificação para Numerais e Date                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
                                         case 'Date':
                                         case 'Byte':
                                         case 'Short':
