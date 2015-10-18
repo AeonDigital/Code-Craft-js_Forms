@@ -777,7 +777,8 @@ CodeCraft.Forms = new (function () {
 
 
 
-        /**        * Cria um objeto "ComplexType" sem precisar informar dados desnecessários para campos
+        /**        
+        * Cria um objeto "ComplexType" sem precisar informar dados desnecessários para campos
         * comuns de formulário.
         * 
         * @function CreateFormType
