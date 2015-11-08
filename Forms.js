@@ -1239,6 +1239,12 @@ CodeCraft.Forms = new (function () {
                         var lbl = (r == 'InvalidComplexType' ||
                                 r == 'ComplexTypeDoesNotExist') ? f.getAttribute('data-ccw-fcon-object') : _getFieldName(f);
 
+                        // Se o campo do formulário está "conectado"...
+                        if (f.hasAttribute('data-ccw-fcon-object')) {
+                            var spl = lbl.split('.');
+                            lbl = spl[spl.length - 1];
+                        }
+
                         errors.push({
                             Field: f,
                             ErrorType: r,
